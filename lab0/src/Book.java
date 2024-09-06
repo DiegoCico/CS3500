@@ -1,4 +1,6 @@
-package Lab0;
+package OOD.lab0;
+
+
 
 /**
  * This class represents a book. A book has a title, an author and a price.

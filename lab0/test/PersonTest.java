@@ -1,6 +1,4 @@
-package Lab0;
-
-
+package OOD.lab0Test;
 
 import org.junit.Before;
 import org.junit.Test;

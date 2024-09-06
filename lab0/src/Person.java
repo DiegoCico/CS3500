@@ -1,4 +1,6 @@
-package Lab0;
+package OOD.lab0;
+
+
 
 /**
  * This class represents a person with a first name, last name and an year of birth.
