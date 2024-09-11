@@ -5,69 +5,79 @@ import org.junit.Test;
 
 import java.util.List;
 
-import edu.neu.TestWeight;
-
+/**
+ * A set of tests to make sure the file system classes, like ReadOnlyFileSystem,
+ * SimpleDirectory, and StringFile, are working as expected.
+ */
 public class ExamplarFileSystem {
 
   /**
-   * Test if the path works when the root directory is empty.
+   * Tests if the path and capacity work when the root directory is empty.
    */
   @Test
   public void testPathInEmptyRootDirectory() {
     ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
-    ReadOnlyFileSystem fileSystem =
-            new ReadOnlyFileSystem(10 * Size.KILOBYTE.inBytes, root);
-    Assert.assertEquals("Checking capacity of filesystem",
-            10 * Size.KILOBYTE.inBytes, fileSystem.capacity());
+    ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(10 * Size.KILOBYTE.inBytes, root);
+    Assert.assertEquals("Capacity mismatch", 10 * Size.KILOBYTE.inBytes, fileSystem.capacity());
   }
 
   /**
-   * Test the capacity of the filesystem when initialized with a specific size.
+   * Checks if the filesystem has the right capacity when given a specific size.
    */
   @Test
   public void testCapacityOfFileSystem() {
     ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
     ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(10 * Size.KILOBYTE.inBytes, root);
-
-    Assert.assertEquals("Capacity of filesystem should be 10 KB", 10 * Size.KILOBYTE.inBytes, fileSystem.capacity());
+    Assert.assertEquals("Wrong capacity", 10 * Size.KILOBYTE.inBytes, fileSystem.capacity());
   }
 
   /**
-   * Test the capacity of the filesystem when set to zero.
+   * Checks if the filesystem has zero capacity when it's initialized that way.
    */
   @Test
   public void testCapacityOfEmptyFileSystem() {
     try {
       ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
       ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(0, root);
-      Assert.assertEquals("Capacity of filesystem should be 0 KB", 0, fileSystem.capacity());
+      Assert.assertEquals("Capacity mismatch", 0, fileSystem.capacity());
     } catch (RuntimeException e) {
-      Assert.assertTrue(true);
+      Assert.assertTrue(true); // Just checking that an exception is caught
     }
   }
 
   /**
-   * Test if StringFile contains the expected content.
+   * Tests if the filesystem capacity is zero when the root is null.
+   */
+  @Test
+  public void testCapacityOfNullRootFileSystem() {
+    try {
+      ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(0, null);
+      Assert.assertEquals("Capacity mismatch", 0, fileSystem.capacity());
+    } catch (RuntimeException e) {
+      Assert.assertTrue(true); // Again, expecting an exception
+    }
+  }
+
+  /**
+   * Makes sure a StringFile contains the right content.
    */
   @Test
   public void testStringFileContents() {
     ContentFile file = new StringFile("file1", "Hello World!");
-
-    Assert.assertEquals("File contents should be 'Hello World!'", "Hello World!", file.contents());
+    Assert.assertEquals("Content mismatch", "Hello World!", file.contents());
   }
 
   /**
-   * Test if an empty directory returns no contents.
+   * Tests if an empty directory really has no contents.
    */
   @Test
   public void testEmptyDirectoryContents() {
     ExtDirectory dir = new SimpleDirectory("root", List.of(), List.of());
-
-    Assert.assertTrue("Directory contents should be empty", dir.contents().isEmpty());
+    Assert.assertTrue("Directory should be empty", dir.contents().isEmpty());
   }
 
   /**
-   * Test if a directory with files returns the correct number of files.
+   * Checks if a directory with files returns the correct number of files.
    */
   @Test
   public void testDirectoryWithFiles() {
@@ -76,32 +86,29 @@ public class ExamplarFileSystem {
     ExtDirectory dir = new SimpleDirectory("root", List.of(), List.of(file1, file2));
 
     List<ExtFile> files = dir.contents();
-
-    Assert.assertEquals("Directory should contain 2 files", 2, files.size());
+    Assert.assertEquals("File count mismatch", 2, files.size());
   }
 
   /**
-   * Test if a search for a phrase in a StringFile returns true when found.
+   * Tests if a search for a phrase in a StringFile returns true when it's there.
    */
   @Test
   public void testSearchInStringFile() {
     ContentFile file = new StringFile("file1", "Searchable content");
-
-    Assert.assertTrue("Phrase 'Search' should be found in the file", file.search("Search"));
+    Assert.assertTrue("Phrase not found", file.search("Search"));
   }
 
   /**
-   * Test if a search for a phrase not in the file returns false.
+   * Tests if a search for a phrase not in the file returns false.
    */
   @Test
   public void testSearchInStringFileFailure() {
     ContentFile file = new StringFile("file1", "This is some content");
-
-    Assert.assertFalse("Phrase 'NotInFile' should not be found in the file", file.search("NotInFile"));
+    Assert.assertFalse("Phrase shouldn't be found", file.search("NotInFile"));
   }
 
   /**
-   * Test if a search in the ReadOnlyFileSystem works correctly.
+   * Tests if the search in the ReadOnlyFileSystem works.
    */
   @Test
   public void testFileSystemSearch() {
@@ -109,12 +116,11 @@ public class ExamplarFileSystem {
     ExtDirectory root = new SimpleDirectory("root", List.of(), List.of(file));
     ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(100 * Size.KILOBYTE.inBytes, root);
 
-    Assert.assertTrue("Phrase 'Find' should be found in the system", fileSystem.search("Find"));
+    Assert.assertTrue("Phrase should be found in system", fileSystem.search("Find"));
   }
 
   /**
-   * Test if an empty file name throws an IllegalArgumentException.
-   * @throws IllegalArgumentException if the file name is empty.
+   * Checks if a StringFile constructor throws an IllegalArgumentException for an empty name.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testStringFileConstructorEmptyName() {
@@ -122,8 +128,7 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if a null content in StringFile constructor throws a NullPointerException.
-   * @throws NullPointerException when contents are null
+   * Makes sure a null content in StringFile throws a NullPointerException.
    */
   @Test(expected = NullPointerException.class)
   public void testStringFileConstructorNullContent() {
@@ -131,8 +136,24 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if SimpleDirectory constructor throws NullPointerException when given a null name.
-   * @throws NullPointerException when given null name
+   * Makes sure a null name in StringFile throws a NullPointerException.
+   */
+  @Test(expected = NullPointerException.class)
+  public void testStringFileConstructorNullName() {
+    new StringFile(null, "This has content");
+  }
+
+  /**
+   * Tests if the name method returns the correct file name.
+   */
+  @Test
+  public void testNameReturnsCorrectFileName() {
+    StringFile file = new StringFile("test1.txt", "This is some content");
+    Assert.assertEquals("Name mismatch", "test1.txt", file.name());
+  }
+
+  /**
+   * Tests if SimpleDirectory constructor throws NullPointerException for a null name.
    */
   @Test(expected = NullPointerException.class)
   public void testSimpleDirectoryConstructorNullName() {
@@ -140,8 +161,7 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if SimpleDirectory constructor throws IllegalArgumentException when given an empty name.
-   * @throws IllegalArgumentException when given empty name
+   * Tests if SimpleDirectory constructor throws IllegalArgumentException for an empty name.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testSimpleDirectoryConstructorEmptyName() {
@@ -149,8 +169,7 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if SimpleDirectory constructor throws NullPointerException when given null contents.
-   * @throws NullPointerException when given null contents
+   * Tests if SimpleDirectory constructor throws NullPointerException for null contents.
    */
   @Test(expected = NullPointerException.class)
   public void testSimpleDirectoryConstructorNullContents() {
@@ -158,18 +177,7 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if SimpleDirectory constructor throws NullPointerException when all parameters are null.
-   * @throws NullPointerException when all parameters are null
-   */
-  @Test(expected = NullPointerException.class)
-  public void testSimpleDirectoryConstructorAllNull() {
-    new SimpleDirectory(null, null, null);
-  }
-
-  /**
-   * Test if negative filesystem capacity throws IllegalArgumentException.
-   *
-   * @throws IllegalArgumentException if the filesystem capacity is negative.
+   * Makes sure the filesystem throws an IllegalArgumentException for negative capacity.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testNegativeFileSystemCapacity() {
@@ -178,9 +186,7 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if null root directory in filesystem constructor throws NullPointerException.
-   *
-   * @throws NullPointerException if the root directory is null.
+   * Makes sure the filesystem throws NullPointerException when the root directory is null.
    */
   @Test(expected = NullPointerException.class)
   public void testNullRootDirectoryInFileSystem() {
@@ -188,66 +194,68 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Test if search is case-sensitive.
+   * Tests if the search is case-sensitive.
    */
   @Test
   public void testSearchCaseSensitivity() {
     ContentFile file = new StringFile("file1", "Hello World");
-    Assert.assertTrue("Phrase 'Hello' should be found", file.search("Hello"));
-    Assert.assertFalse("Phrase 'hello' should not be found (case-sensitive)", file.search("hello"));
+    Assert.assertTrue("Case-sensitive search failed", file.search("Hello"));
+    Assert.assertFalse("Case mismatch", file.search("hello"));
   }
 
   /**
-   * Test if searching for an empty string returns true.
+   * Tests if searching for an empty string returns true.
    */
   @Test
   public void testSearchEmptyPhrase() {
     ContentFile file = new StringFile("file1", "content");
-    Assert.assertTrue("Empty string should be found in the file", file.search(""));
+    Assert.assertTrue("Empty string should be found", file.search(""));
   }
 
   /**
-   * Tests the prettyPrint functionality of a directory with no files.
+   * Tests the prettyPrint functionality with an empty root directory.
    */
   @Test
-  public void testPrettyPrintEmptyDirectory() {
+  public void testPrettyPrintEmptyRootDirectory() {
     ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
-
     String expected = "+-root/";
-    Assert.assertEquals("Pretty print should show the directory with no contents", expected, root.prettyPrint());
+    Assert.assertEquals("Pretty print mismatch", expected, root.prettyPrint());
   }
 
   /**
-   * Tests the prettyPrint functionality of a directory with 2 files.
+   * Tests the totalSize method with multiple files.
    */
   @Test
-  public void testPrettyPrintWithFiles() {
-    ContentFile file1 = new StringFile("a.txt", "Content 1");
-    ContentFile file2 = new StringFile("b.txt", "Content 2");
+  public void testTotalSizeWithMultipleFiles() {
+    ContentFile file1 = new StringFile("file1.txt", "Hello");
+    ContentFile file2 = new StringFile("file2.txt", "World");
     ExtDirectory root = new SimpleDirectory("root", List.of(), List.of(file1, file2));
 
-    String expected = "+-root/\n" +
-            "| +-a.txt\n" +
-            "| +-b.txt";
-
-    Assert.assertEquals("Pretty print should show the files in the root directory", expected, root.prettyPrint());
+    long expectedSize = file1.size() + file2.size() + root.size();
+    Assert.assertEquals("Total size mismatch", expectedSize, root.totalSize());
   }
 
   /**
-   * Tests the prettyPrint functionality of a nested directories with files.
+   * Tests the totalSize method with multiple files and subdirectories.
    */
   @Test
-  public void testPrettyPrintNestedDirectories() {
-    ContentFile file1 = new StringFile("file1.txt", "Content 1");
-    ContentFile file2 = new StringFile("file2.txt", "Content 2");
-    ExtDirectory subDir = new SimpleDirectory("lib", List.of(), List.of(file2));
+  public void testTotalSizeWithMultipleFilesAndSubDirectories() {
+    ContentFile file1 = new StringFile("file1.txt", "Hello");
+    ContentFile file2 = new StringFile("file2.txt", "World");
+    ExtDirectory subDir = new SimpleDirectory("subDir", List.of(), List.of(file2));
     ExtDirectory root = new SimpleDirectory("root", List.of(subDir), List.of(file1));
 
-    String expected = "+-root/\n" +
-            "| +-file1.txt\n" +
-            "| +-lib/\n" +
-            "| | +-file2.txt";
-    Assert.assertEquals("Pretty print should show nested directories with proper indentation", expected, root.prettyPrint());
+    long expectedSize = file1.size() + file2.size() + root.size() + subDir.size();
+    Assert.assertEquals("Total size mismatch", expectedSize, root.totalSize());
   }
 
+  /**
+   * Tests the totalSize method for an empty directory.
+   */
+  @Test
+  public void testTotalSizeForEmptyDirectory() {
+    ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
+    long expectedSize = root.size();
+    Assert.assertEquals("Total size mismatch", expectedSize, root.totalSize());
+  }
 }

@@ -28,14 +28,14 @@ public interface FileSystem {
    * Returns a human-readable view of the filesystem.
    * Contents of directories are preceded by a straight line and
    * two spaces. An example of output follows
-   * +made-up-name/
-   * |  +empty_dir/
-   * |  +lib/
-   * |  |  +file1
-   * |  +usr/
-   * |  |  +lib/
-   * |  |  |  java.exe
-   * |  |  secret.txt
+   * +-made-up-name/
+   * |  +-empty_dir/
+   * |  +-lib/
+   * |  |  +-file1
+   * |  +-usr/
+   * |  |  +-lib/
+   * |  |  |  +-java.exe
+   * |  |  +-secret.txt
    * @return an indented human-readable view of the filesystem
    */
   String prettyPrint();
