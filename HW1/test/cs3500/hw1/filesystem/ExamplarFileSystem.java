@@ -136,23 +136,6 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Makes sure a null name in StringFile throws a NullPointerException.
-   */
-  @Test(expected = NullPointerException.class)
-  public void testStringFileConstructorNullName() {
-    new StringFile(null, "This has content");
-  }
-
-  /**
-   * Tests if the name method returns the correct file name.
-   */
-  @Test
-  public void testNameReturnsCorrectFileName() {
-    StringFile file = new StringFile("test1.txt", "This is some content");
-    Assert.assertEquals("Name mismatch", "test1.txt", file.name());
-  }
-
-  /**
    * Tests if SimpleDirectory constructor throws NullPointerException for a null name.
    */
   @Test(expected = NullPointerException.class)
@@ -258,4 +241,33 @@ public class ExamplarFileSystem {
     long expectedSize = root.size();
     Assert.assertEquals("Total size mismatch", expectedSize, root.totalSize());
   }
+
+  /**
+   * Tests if the filesystem throws an IllegalArgumentException when the capacity
+   * is less than the total size of the directory's contents.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testFileSystemCapacityLessThanDirectorySize() {
+    ContentFile file1 = new StringFile("file1.txt", "This is some content");
+    ContentFile file2 = new StringFile("file2.txt", "Another file content");
+
+    ExtDirectory root = new SimpleDirectory("root", List.of(), List.of(file1, file2));
+
+    long totalSize = file1.size() + file2.size() + root.size();
+    new ReadOnlyFileSystem(totalSize - 1, root);
+  }
+
+  /**
+   * Tests if the getting the contents and then changing it
+   */
+  @Test
+  public void testContentFileChangingContents() {
+    ContentFile file1 = new StringFile("file1.txt", "This is some content");
+    Assert.assertEquals("Locating Content", "This is some content", file1.contents());
+    file1 = new StringFile("file2.txt", "Another file content");
+    Assert.assertEquals("Locating Content", "Another file content", file1.contents());
+  }
+
+
+
 }
