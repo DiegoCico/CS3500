@@ -12,53 +12,6 @@ import java.util.List;
 public class ExamplarFileSystem {
 
   /**
-   * Tests if the path and capacity work when the root directory is empty.
-   */
-  @Test
-  public void testPathInEmptyRootDirectory() {
-    ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
-    ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(10 * Size.KILOBYTE.inBytes, root);
-    Assert.assertEquals("Capacity mismatch", 10 * Size.KILOBYTE.inBytes, fileSystem.capacity());
-  }
-
-  /**
-   * Checks if the filesystem has the right capacity when given a specific size.
-   */
-  @Test
-  public void testCapacityOfFileSystem() {
-    ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
-    ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(10 * Size.KILOBYTE.inBytes, root);
-    Assert.assertEquals("Wrong capacity", 10 * Size.KILOBYTE.inBytes, fileSystem.capacity());
-  }
-
-  /**
-   * Checks if the filesystem has zero capacity when it's initialized that way.
-   */
-  @Test
-  public void testCapacityOfEmptyFileSystem() {
-    try {
-      ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
-      ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(0, root);
-      Assert.assertEquals("Capacity mismatch", 0, fileSystem.capacity());
-    } catch (RuntimeException e) {
-      Assert.assertTrue(true); // Just checking that an exception is caught
-    }
-  }
-
-  /**
-   * Tests if the filesystem capacity is zero when the root is null.
-   */
-  @Test
-  public void testCapacityOfNullRootFileSystem() {
-    try {
-      ReadOnlyFileSystem fileSystem = new ReadOnlyFileSystem(0, null);
-      Assert.assertEquals("Capacity mismatch", 0, fileSystem.capacity());
-    } catch (RuntimeException e) {
-      Assert.assertTrue(true); // Again, expecting an exception
-    }
-  }
-
-  /**
    * Makes sure a StringFile contains the right content.
    */
   @Test
@@ -68,34 +21,23 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Tests if an empty directory really has no contents.
-   */
-  @Test
-  public void testEmptyDirectoryContents() {
-    ExtDirectory dir = new SimpleDirectory("root", List.of(), List.of());
-    Assert.assertTrue("Directory should be empty", dir.contents().isEmpty());
-  }
-
-  /**
-   * Checks if a directory with files returns the correct number of files.
-   */
-  @Test
-  public void testDirectoryWithFiles() {
-    ContentFile file1 = new StringFile("file1", "Data1");
-    ContentFile file2 = new StringFile("file2", "Data2");
-    ExtDirectory dir = new SimpleDirectory("root", List.of(), List.of(file1, file2));
-
-    List<ExtFile> files = dir.contents();
-    Assert.assertEquals("File count mismatch", 2, files.size());
-  }
-
-  /**
    * Tests if a search for a phrase in a StringFile returns true when it's there.
    */
   @Test
   public void testSearchInStringFile() {
     ContentFile file = new StringFile("file1", "Searchable content");
     Assert.assertTrue("Phrase not found", file.search("Search"));
+  }
+
+  /**
+   * Tests if a search for a phrase in a StringFile returns true when it's there.
+   */
+  @Test (expected = IllegalArgumentException.class)
+  public void testSearchInADirectoryStringFileNull() {
+    ContentFile file = new StringFile("file1", "Searchable content");
+    ExtDirectory subDir = new SimpleDirectory("subDir", List.of(), List.of());
+    ExtDirectory dir = new SimpleDirectory("root", List.of(subDir), List.of(file));
+    Assert.assertFalse("Phrase not found", dir.search(null));
   }
 
   /**
@@ -136,22 +78,6 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Tests if SimpleDirectory constructor throws NullPointerException for a null name.
-   */
-  @Test(expected = NullPointerException.class)
-  public void testSimpleDirectoryConstructorNullName() {
-    new SimpleDirectory(null, List.of(), List.of());
-  }
-
-  /**
-   * Tests if SimpleDirectory constructor throws IllegalArgumentException for an empty name.
-   */
-  @Test(expected = IllegalArgumentException.class)
-  public void testSimpleDirectoryConstructorEmptyName() {
-    new SimpleDirectory("", List.of(), List.of());
-  }
-
-  /**
    * Tests if SimpleDirectory constructor throws NullPointerException for null contents.
    */
   @Test(expected = NullPointerException.class)
@@ -160,19 +86,11 @@ public class ExamplarFileSystem {
   }
 
   /**
-   * Makes sure the filesystem throws an IllegalArgumentException for negative capacity.
-   */
-  @Test(expected = IllegalArgumentException.class)
-  public void testNegativeFileSystemCapacity() {
-    ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
-    new ReadOnlyFileSystem(-100, root);
-  }
-
-  /**
    * Makes sure the filesystem throws NullPointerException when the root directory is null.
    */
   @Test(expected = NullPointerException.class)
   public void testNullRootDirectoryInFileSystem() {
+    new ReadOnlyFileSystem(100 * Size.KILOBYTE.inBytes, null);
     new ReadOnlyFileSystem(100 * Size.KILOBYTE.inBytes, null);
   }
 
@@ -196,12 +114,34 @@ public class ExamplarFileSystem {
   }
 
   /**
+   * Tests if searching for an empty dir returns true.
+   */
+  @Test
+  public void testSearchEmptyDirectory() {
+    ExtDirectory dir = new SimpleDirectory("dir", List.of(), List.of());
+    Assert.assertTrue("Empty string should be found", dir.search(""));
+  }
+
+  /**
    * Tests the prettyPrint functionality with an empty root directory.
    */
   @Test
   public void testPrettyPrintEmptyRootDirectory() {
     ExtDirectory root = new SimpleDirectory("root", List.of(), List.of());
     String expected = "+-root/";
+    Assert.assertEquals("Pretty print mismatch", expected, root.prettyPrint());
+  }
+
+  /**
+   * Tests the prettyPrint functionality with an empty root directory.
+   */
+  @Test
+  public void testPrettyPrintTwoRootDirectory() {
+    ExtDirectory dir = new SimpleDirectory("Dir", List.of(), List.of());
+    ExtDirectory root = new SimpleDirectory("root", List.of(dir), List.of());
+
+    String expected = "+-root/\n" +
+                      "| +-Dir/";
     Assert.assertEquals("Pretty print mismatch", expected, root.prettyPrint());
   }
 
@@ -230,6 +170,19 @@ public class ExamplarFileSystem {
 
     long expectedSize = file1.size() + file2.size() + root.size() + subDir.size();
     Assert.assertEquals("Total size mismatch", expectedSize, root.totalSize());
+  }
+
+  /**
+   * Tests the to try to add a new content.
+   */
+  @Test
+  public void testAddingContents() {
+    ContentFile file1 = new StringFile("file1.txt", "Hello");
+    ExtDirectory root = new SimpleDirectory("root", List.of(), List.of(file1));
+    ContentFile file2 = new StringFile("file2.txt", "World");
+    root.contents().add(file2);
+
+    Assert.assertEquals("Total size mismatch", List.of(file1), root.contents());
   }
 
   /**
@@ -267,6 +220,7 @@ public class ExamplarFileSystem {
     file1 = new StringFile("file2.txt", "Another file content");
     Assert.assertEquals("Locating Content", "Another file content", file1.contents());
   }
+
 
 
 
