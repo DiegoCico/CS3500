@@ -1,10 +1,10 @@
 package cs3500.solored.model.hw02;
 
-public class SoloCard implements Card{
+public class CardModel implements Card{
   private final String color;
   private final int number;
 
-  public SoloCard(String color, int number) {
+  public CardModel(String color, int number) {
     this.color = color;
     this.number = number;
   }
