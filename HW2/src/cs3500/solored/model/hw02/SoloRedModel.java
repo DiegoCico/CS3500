@@ -1,5 +1,6 @@
 package cs3500.solored.model.hw02;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +11,7 @@ public class SoloRedModel implements RedGameModel {
   private List<List<CardModel>> palettes;
   private CardModel canvas;
   private boolean gameStarted;
+  private boolean canvasPlayedThisTurn;
 
   public SoloRedModel() {
     this.deck = new ArrayList<>();
@@ -17,6 +19,7 @@ public class SoloRedModel implements RedGameModel {
     this.palettes = new ArrayList<>();
     this.canvas = null;
     this.gameStarted = false;
+    this.canvasPlayedThisTurn = false;
   }
 
   /**
@@ -34,6 +37,21 @@ public class SoloRedModel implements RedGameModel {
    */
   @Override
   public void playToPalette(int paletteIdx, int cardIdxInHand) {
+    if (!gameStarted || isGameOver()) {
+      throw new IllegalStateException("Game is over or game has not started.");
+    }
+    if (paletteIdx < 2 || paletteIdx >= palettes.size()) {
+      throw new IllegalArgumentException("Invalid palette index.");
+    }
+    if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
+      throw new IllegalArgumentException("Invalid card index in hand.");
+    }
+    if (winningPaletteIndex() == paletteIdx) {
+      throw new IllegalStateException("Cannot play to a winning palette.");
+    }
+
+    CardModel cardToPlay = hand.remove(cardIdxInHand);
+    palettes.get(paletteIdx).add(cardToPlay);
   }
 
   /**
@@ -50,7 +68,21 @@ public class SoloRedModel implements RedGameModel {
    */
   @Override
   public void playToCanvas(int cardIdxInHand) {
+    if (!gameStarted || isGameOver()) {
+      throw new IllegalStateException("Game is over or game has not started.");
+    }
+    if (canvasPlayedThisTurn) {
+      throw new IllegalStateException("Canvas has already been played this turn.");
+    }
+    if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
+      throw new IllegalArgumentException("Invalid card index in hand.");
+    }
 
+    CardModel cardToPlay = hand.remove(cardIdxInHand);
+    canvas = cardToPlay;
+    canvasPlayedThisTurn = true;
+
+    winningPaletteIndex();
   }
 
   /**
@@ -63,7 +95,15 @@ public class SoloRedModel implements RedGameModel {
    */
   @Override
   public void drawForHand() {
+    if (!gameStarted || isGameOver()) {
+      throw new IllegalStateException("Game has not started or the game is over.");
+    }
 
+    while (hand.size() < 7 && !deck.isEmpty()) {
+      hand.add(deck.remove(0));
+    }
+
+    canvasPlayedThisTurn = false;
   }
 
   /**
@@ -89,15 +129,20 @@ public class SoloRedModel implements RedGameModel {
       throw new IllegalArgumentException("Not enough cards to start the game.");
     }
 
-    deck = new ArrayList<>(deck);
+    this.deck = new ArrayList<>(deck);
     if (shuffle) {
-      Collections.shuffle(deck);
+      Collections.shuffle(this.deck);
+    }
+
+    for (int i = 0; i < handSize; i++) {
+      hand.add(this.deck.removeFirst());
     }
 
     palettes = new ArrayList<>();
     for (int i = 0; i < numPalettes; i++) {
       List<CardModel> palette = new ArrayList<>();
-      palette.add(new CardModel(this.deck.remove(0).getColor(), this.deck.remove(0).getNumber()));
+      palette.add(new CardModel(this.deck.getFirst().getColor(), this.deck.getFirst().getNumber()));
+      this.deck.removeFirst();
       this.palettes.add(palette);
     }
 
@@ -144,7 +189,7 @@ public class SoloRedModel implements RedGameModel {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
-    return 0;
+    return WinningPallet.checkWinningPallet(palettes, getCanvas());
   }
 
   /**
@@ -169,7 +214,6 @@ public class SoloRedModel implements RedGameModel {
    */
   @Override
   public boolean isGameWon() {
-    // TODO: MAKE SURE THIS IS CODED CORRECTLY
     return isGameOver();
   }
 
@@ -182,7 +226,7 @@ public class SoloRedModel implements RedGameModel {
    * @throws IllegalStateException if the game has not started
    */
   @Override
-  public List getHand() {
+  public List<CardModel> getHand() {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
@@ -200,7 +244,7 @@ public class SoloRedModel implements RedGameModel {
    * @throws IllegalArgumentException if paletteIdx < 0 or more than the number of palettes
    */
   @Override
-  public List getPalette(int paletteNum) {
+  public List<CardModel> getPalette(int paletteNum) {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
@@ -218,11 +262,12 @@ public class SoloRedModel implements RedGameModel {
    * @throws IllegalStateException if the game has not started or the game is over
    */
   @Override
-  public Card getCanvas() {
+  public CardModel getCanvas() {
     if (!gameStarted || isGameOver()) {
       throw new IllegalStateException("Game has not been started or Game is already ended.");
     }
-    return canvas;
+    CardModel copy = new CardModel(canvas.getColor(), canvas.getNumber());
+    return copy;
   }
 
   /**
@@ -235,8 +280,8 @@ public class SoloRedModel implements RedGameModel {
    * @return a new list of all possible cards that can be used for the game
    */
   @Override
-  public List<Card> getAllCards() {
-    List<Card> allCards = new ArrayList<>();
+  public List<CardModel> getAllCards() {
+    List<CardModel> allCards = new ArrayList<>();
     String[] colors = {"R", "O", "B", "I", "V"};
     for (String color : colors) {
       for (int num = 1; num <= 7; num++) {
