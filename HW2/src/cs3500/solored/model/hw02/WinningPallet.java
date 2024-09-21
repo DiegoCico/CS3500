@@ -1,4 +1,4 @@
-package cs3500.solored.model.hw02;
+package cs3500.solored.filesystem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,18 +25,10 @@ public class WinningPallet {
 
     private final int value;
 
-    /**
-     * Constructor for COLOR enum.
-     * @param value the value associated with the color
-     */
     COLOR(int value) {
       this.value = value;
     }
 
-    /**
-     * Gets the value of the color.
-     * @return the value of the color
-     */
     public int getValue() {
       return value;
     }
@@ -44,28 +36,63 @@ public class WinningPallet {
 
   /**
    * Determines the winning pallet based on the color of the canvas card.
-   * Each color corresponds to a different rule for determining the winning pallet.
+   * It uses different rules depending on the canvas card's color.
    *
    * @param pallets a list of pallets (each containing a list of cards)
    * @param canvas the canvas card that determines the rule to apply
    * @return the index of the winning pallet
+   * @throws IllegalArgumentException if the pallet list is null, empty, or contains invalid cards
+   * @throws NullPointerException if a pallet or card is null
    */
   public static int checkWinningPallet(List<List<CardModel>> pallets, CardModel canvas) {
-    return switch (COLOR.valueOf(canvas.getColor())) {
-      case R -> highestCard(pallets); // Red - Pallet with the highest card
-      case O -> mostSingleNumbers(pallets); // Orange - Pallet with the most repeated numbers
-      case B -> mostDifferentColors(pallets); // Blue - Pallet with the most different colors
-      case I -> longestRun(pallets); // Indigo - Pallet with the longest run of numbers
-      case V -> cardsBelowFour(pallets); // Violet - Pallet with the most cards below four
-      default -> throw new IllegalArgumentException("Invalid color: " + canvas.getColor());
-    };
+    if (pallets == null || pallets.isEmpty()) {
+      throw new IllegalArgumentException("Pallet list cannot be null or empty.");
+    }
+    if (canvas == null) {
+      throw new IllegalArgumentException("Canvas card cannot be null.");
+    }
+
+    for (List<CardModel> pallet : pallets) {
+      if (pallet == null) {
+        throw new IllegalArgumentException("A pallet in the list is null.");
+      }
+      for (CardModel card : pallet) {
+        if (card == null) {
+          throw new IllegalArgumentException("A card in a pallet is null.");
+        }
+        if (card.getNumber() < 0) {
+          throw new IllegalArgumentException("Card number cannot be negative: " + card.getNumber());
+        }
+      }
+    }
+
+    try {
+      COLOR color = COLOR.valueOf(canvas.getColor());
+      switch (color) {
+        case R:
+          return highestCard(pallets);
+        case O:
+          return mostSingleNumbers(pallets);
+        case B:
+          return mostDifferentColors(pallets);
+        case I:
+          return longestRun(pallets);
+        case V:
+          return cardsBelowFour(pallets);
+        default:
+          throw new IllegalArgumentException("Invalid color: " + canvas.getColor());
+      }
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Invalid color: " + canvas.getColor(), e);
+    }
+
   }
 
   /**
-   * Finds the pallet with the highest card.
-   * If multiple pallets have the same highest card, the one with the highest color value wins.
+   * Determines which pallet contains the highest card.
+   * In case of ties in card number, the card with the higher color value wins.
    *
-   * @param pallets a list of pallets to check
+   * @param pallets the list of pallets to evaluate
    * @return the index of the pallet with the highest card
    */
   private static int highestCard(List<List<CardModel>> pallets) {
@@ -74,19 +101,14 @@ public class WinningPallet {
 
     for (int i = 0; i < pallets.size(); i++) {
       List<CardModel> pallet = pallets.get(i);
-      for (int j = 0; j < pallet.size(); j++) {
-        CardModel card = pallet.get(j);
-        if (highestCard == null) {
+      for (CardModel card : pallet) {
+        if (highestCard == null
+                || card.getNumber() > highestCard.getNumber() ||
+                (card.getNumber() == highestCard.getNumber()
+                        && COLOR.valueOf(card.getColor()).getValue()
+                        > COLOR.valueOf(highestCard.getColor()).getValue())) {
           highestCard = card;
           highestPalletRowIndex = i;
-        } else if (card.getNumber() > highestCard.getNumber()) {
-          highestCard = card;
-          highestPalletRowIndex = i;
-        } else if (card.getNumber() == highestCard.getNumber()) {
-          if (COLOR.valueOf(card.getColor()).getValue() > COLOR.valueOf(highestCard.getColor()).getValue()) {
-            highestCard = card;
-            highestPalletRowIndex = i;
-          }
         }
       }
     }
@@ -94,9 +116,9 @@ public class WinningPallet {
   }
 
   /**
-   * Finds the pallet with the most repeated card numbers.
+   * Determines which pallet has the most repeated card numbers.
    *
-   * @param pallets a list of pallets to check
+   * @param pallets the list of pallets to evaluate
    * @return the index of the pallet with the most repeated numbers
    */
   private static int mostSingleNumbers(List<List<CardModel>> pallets) {
@@ -134,9 +156,9 @@ public class WinningPallet {
   }
 
   /**
-   * Finds the pallet with the most different colors.
+   * Determines which pallet has the most different colors.
    *
-   * @param pallets a list of pallets to check
+   * @param pallets the list of pallets to evaluate
    * @return the index of the pallet with the most different colors
    */
   private static int mostDifferentColors(List<List<CardModel>> pallets) {
@@ -164,9 +186,9 @@ public class WinningPallet {
   }
 
   /**
-   * Finds the pallet with the longest consecutive run of numbers.
+   * Determines which pallet has the longest consecutive run of card numbers.
    *
-   * @param pallets a list of pallets to check
+   * @param pallets the list of pallets to evaluate
    * @return the index of the pallet with the longest run, or -1 if no valid run exists
    */
   private static int longestRun(List<List<CardModel>> pallets) {
@@ -208,9 +230,9 @@ public class WinningPallet {
   }
 
   /**
-   * Finds the pallet with the most cards where the card number is less than 4.
+   * Determines which pallet has the most cards with numbers below four.
    *
-   * @param pallets a list of pallets to check
+   * @param pallets the list of pallets to evaluate
    * @return the index of the pallet with the most cards below four, or -1 if none exist
    */
   private static int cardsBelowFour(List<List<CardModel>> pallets) {

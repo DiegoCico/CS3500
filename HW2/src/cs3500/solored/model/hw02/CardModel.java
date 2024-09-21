@@ -1,4 +1,4 @@
-package cs3500.solored.model.hw02;
+package cs3500.solored.filesystem;
 
 /**
  * Represents a card in the game with a color and a number.

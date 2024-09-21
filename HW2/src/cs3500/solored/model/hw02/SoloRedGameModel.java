@@ -1,11 +1,10 @@
-package cs3500.solored.model.hw02;
+package cs3500.solored.filesystem;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SoloRedModel implements RedGameModel {
+public class SoloRedGameModel implements RedGameModel {
   private List<CardModel> deck;
   private List<CardModel> hand;
   private List<List<CardModel>> palettes;
@@ -13,7 +12,7 @@ public class SoloRedModel implements RedGameModel {
   private boolean gameStarted;
   private boolean canvasPlayedThisTurn;
 
-  public SoloRedModel() {
+  public SoloRedGameModel() {
     this.deck = new ArrayList<>();
     this.hand = new ArrayList<>();
     this.palettes = new ArrayList<>();
@@ -40,7 +39,7 @@ public class SoloRedModel implements RedGameModel {
     if (!gameStarted || isGameOver()) {
       throw new IllegalStateException("Game is over or game has not started.");
     }
-    if (paletteIdx < 2 || paletteIdx >= palettes.size()) {
+    if (paletteIdx < 0 || paletteIdx >= palettes.size()) {
       throw new IllegalArgumentException("Invalid palette index.");
     }
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
@@ -135,14 +134,14 @@ public class SoloRedModel implements RedGameModel {
     }
 
     for (int i = 0; i < handSize; i++) {
-      hand.add(this.deck.removeFirst());
+      hand.add(this.deck.remove(0));
     }
 
     palettes = new ArrayList<>();
     for (int i = 0; i < numPalettes; i++) {
       List<CardModel> palette = new ArrayList<>();
-      palette.add(new CardModel(this.deck.getFirst().getColor(), this.deck.getFirst().getNumber()));
-      this.deck.removeFirst();
+      palette.add(new CardModel(this.deck.get(0).getColor(), this.deck.get(0).getNumber()));
+      this.deck.remove(0);
       this.palettes.add(palette);
     }
 
@@ -189,7 +188,7 @@ public class SoloRedModel implements RedGameModel {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
-    return WinningPallet.checkWinningPallet(palettes, getCanvas());
+    return WinningPallet.checkWinningPallet(palettes, canvas);
   }
 
   /**
@@ -221,9 +220,9 @@ public class SoloRedModel implements RedGameModel {
    * Returns a copy of the hand in the game. This means modifying the returned list
    * or the cards in the list has no effect on the game.
    *
-   * @return a new list containing the cards in the player's hand in the same order
-   * as in the current state of the game.
-   * @throws IllegalStateException if the game has not started
+   *    @return a new list containing the cards in the player's hand in the same order
+   *    as in the current state of the game.
+   *    @throws IllegalStateException if the game has not started
    */
   @Override
   public List<CardModel> getHand() {
@@ -237,11 +236,11 @@ public class SoloRedModel implements RedGameModel {
    * Returns a copy of the specified palette. This means modifying the returned list
    * or the cards in the list has no effect on the game.
    *
-   * @param paletteNum 0-based index of a particular palette
-   * @return a new list containing the cards in specified palette in the same order
-   * as in the current state of the game.
-   * @throws IllegalStateException    if the game has not started
-   * @throws IllegalArgumentException if paletteIdx < 0 or more than the number of palettes
+   *    @param paletteNum 0-based index of a particular palette
+   *    @return a new list containing the cards in specified palette in the same order
+   *    as in the current state of the game.
+   *    @throws IllegalStateException    if the game has not started
+   *    @throws IllegalArgumentException if paletteIdx < 0 or more than the number of palettes
    */
   @Override
   public List<CardModel> getPalette(int paletteNum) {
@@ -277,7 +276,7 @@ public class SoloRedModel implements RedGameModel {
    * Modifying the cards in this list should have no effect on any returned list
    * or the game itself.
    *
-   * @return a new list of all possible cards that can be used for the game
+   *    @return a new list of all possible cards that can be used for the game
    */
   @Override
   public List<CardModel> getAllCards() {

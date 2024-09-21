@@ -1,4 +1,4 @@
-package cs3500.solored.model.hw02;
+package cs3500.solored.filesystem;
 
 /**
  * Behaviors for a Card in the Game of RedSeven.
