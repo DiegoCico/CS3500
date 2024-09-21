@@ -1,4 +1,4 @@
-package cs3500.solored.filesystem;
+package cs3500.solored.view.hw02;
 
 /**
  * Behaviors needed for a view of the RedSeven implementation

@@ -1,4 +1,7 @@
-package cs3500.solored.filesystem;
+package cs3500.solored.view.hw02;
+
+import cs3500.solored.model.hw02.CardModel;
+import cs3500.solored.model.hw02.SoloRedGameModel;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package cs3500.solored.hw2.filesystem;
+package cs3500.solored.hw2;
 
 import org.junit.Before;
 import org.junit.Test;

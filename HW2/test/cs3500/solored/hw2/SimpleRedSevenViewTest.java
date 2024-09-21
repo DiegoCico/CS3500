@@ -1,4 +1,4 @@
-package cs3500.solored.hw2.filesystem;
+package cs3500.solored.hw2;
 
 import cs3500.solored.model.hw02.CardModel;
 import cs3500.solored.model.hw02.SoloRedGameModel;
