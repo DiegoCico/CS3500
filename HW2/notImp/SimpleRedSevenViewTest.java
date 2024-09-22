@@ -2,7 +2,7 @@ package cs3500.solored.hw2;
 
 import cs3500.solored.model.hw02.CardModel;
 import cs3500.solored.model.hw02.SoloRedGameModel;
-import cs3500.solored.view.hw02.SimpleRedSevenView;
+import cs3500.solored.view.hw02.SoloRedGameTextView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import java.util.List;
 public class SimpleRedSevenViewTest {
 
   private SoloRedGameModel model;
-  private SimpleRedSevenView view;
+  private SoloRedGameTextView view;
   private List<CardModel> deck;
 
   /**
@@ -44,7 +44,7 @@ public class SimpleRedSevenViewTest {
             new CardModel("O", 5)
     );
     model.startGame(deck, false, 3, 5);
-    view = new SimpleRedSevenView(model);
+    view = new SoloRedGameTextView(model);
   }
 
   /**
@@ -53,9 +53,9 @@ public class SimpleRedSevenViewTest {
   @Test
   public void testToStringInitialGame() {
     String expected = "Canvas: R\n"
-            + "P1: R6\n"
-            + "> P2: O7\n"
-            + "P3: B1\n"
+            + "P1: R6 \n"
+            + "> P2: O7 \n"
+            + "P3: B1 \n"
             + "Hand: R1 O2 B3 I4 V5";
     assertEquals("Initial state wrong.", expected, view.toString().trim());
   }
@@ -68,9 +68,9 @@ public class SimpleRedSevenViewTest {
     model.playToPalette(2, 0);
 
     String expected = "Canvas: R\n"
-            + "P1: R6\n"
-            + "> P2: O7\n"
-            + "P3: B1 R1\n"
+            + "P1: R6 \n"
+            + "> P2: O7 \n"
+            + "P3: B1 R1 \n"
             + "Hand: O2 B3 I4 V5";
     assertEquals("Play to palette state wrong.", expected, view.toString());
   }
@@ -83,9 +83,9 @@ public class SimpleRedSevenViewTest {
     model.playToCanvas(1);
 
     String expected = "Canvas: O\n"
-            + "P1: R6\n"
-            + "P2: O7\n"
-            + "P3: B1\n"
+            + "P1: R6 \n"
+            + "P2: O7 \n"
+            + "P3: B1 \n"
             + "Hand: R1 B3 I4 V5";
     assertEquals("Play to canvas state wrong.", expected, view.toString());
   }
@@ -99,9 +99,9 @@ public class SimpleRedSevenViewTest {
     model.playToCanvas(1);
 
     String expected = "Canvas: B\n"
-            + "P1: R6\n"
-            + "P2: O7\n"
-            + "> P3: B1 R1\n"
+            + "P1: R6 \n"
+            + "P2: O7 \n"
+            + "> P3: B1 R1 \n"
             + "Hand: O2 I4 V5";
     assertEquals("Winning state wrong.", expected, view.toString());
   }
@@ -118,10 +118,10 @@ public class SimpleRedSevenViewTest {
     model.playToPalette(0, 0);
 
     String expected = "Canvas: R\n"
-            + "P1: R6 R1 O2 B3 I4 V5\n"
-            + "> P2: O7\n"
-            + "P3: B1\n"
-            + "Hand: ";
+            + "P1: R6 R1 O2 B3 I4 V5 \n"
+            + "> P2: O7 \n"
+            + "P3: B1 \n"
+            + "Hand:";
     assertEquals("Empty hand state wrong.", expected, view.toString());
   }
 }
