@@ -1,7 +1,7 @@
 package cs3500.solored.view.hw02;
 
 import cs3500.solored.model.hw02.CardModel;
-import cs3500.solored.model.hw02.SoloRedGameModel;
+import cs3500.solored.model.hw02.RedGameModel;
 
 import java.util.List;
 
@@ -9,48 +9,100 @@ import java.util.List;
  * A simple view class for representing the current state of the RedSeven game.
  * It displays the canvas, each palette, and the cards in hand in a formatted string.
  */
-public class SimpleRedSevenView implements RedSevenView {
-  private final SoloRedGameModel model;
+public class SoloRedGameTextView implements RedGameView {
+  private final RedGameModel<?> model;
 
   /**
    * Constructs a view for the RedSeven game.
    *
-   * @param model the game model to generate the view for
+   *    @param model the game model to generate the view for
    */
-  public SimpleRedSevenView(SoloRedGameModel model) {
+  public SoloRedGameTextView(RedGameModel<?> model) {
     this.model = model;
   }
 
   /**
    * Provides a string representation of the current game state, including:
-   * The canvas card, Each palette's cards, The player's hand,
-   * The winning palette is shown by ">" symbol.
+   * The canvas card, each palette's cards, the player's hand,
+   * and the winning palette indicated by the ">" symbol.
+   *
+   * <p>Edge cases handled:
+   * <ul>
+   *   <li>No canvas card</li>
+   *   <li>No palettes or empty palettes</li>
+   *   <li>Empty hand</li>
+   * </ul>
    *
    * @return a formatted string representing the game state
    */
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("Canvas: ").append(model.getCanvas().getColor()).append("\n");
 
-    for (int i = 0; i < model.numPalettes(); i++) {
-      if (i == model.winningPaletteIndex()) {
-        sb.append("> ");
+    try {
+      CardModel canvasCard = (CardModel) model.getCanvas();
+      if (canvasCard == null) {
+        sb.append("Canvas: (empty)").append("\n");
+      } else {
+        sb.append("Canvas: ").append(canvasCard.getColor()).append("\n");
       }
-      sb.append("P").append(i + 1).append(": ");
-      List<CardModel> palette = model.getPalette(i);
-      for (CardModel card : palette) {
-        sb.append(card.toString()).append(" ");
-      }
-      sb.append("\n");
+    } catch (Exception e) {
+      sb.append("Error getting canvas: ").append(e.getMessage()).append("\n");
     }
 
-    sb.append("Hand: ");
-    List<CardModel> hand = model.getHand();
-    for (CardModel card : hand) {
-      sb.append(card.toString()).append(" ");
+    try {
+      int numPalettes = model.numPalettes();
+      if (numPalettes == 0) {
+        throw new IllegalArgumentException("No palettes available.");
+      } else {
+        for (int i = 0; i < numPalettes; i++) {
+          if (i == model.winningPaletteIndex()) {
+            sb.append("> ");
+          }
+          sb.append("P").append(i + 1).append(": ");
+
+          try {
+            List<CardModel> palette = (List<CardModel>) model.getPalette(i);
+            if (palette == null || palette.isEmpty()) {
+              sb.append("(empty)");
+            } else {
+              for (int j = 0; j < palette.size(); j++) {
+                sb.append(palette.get(j).toString());
+                if (j < palette.size() - 1) {
+                  sb.append(" ");
+                }
+              }
+            }
+          } catch (Exception e) {
+            sb.append("(Error getting palette: ").append(e.getMessage()).append(")");
+          }
+          if (i < numPalettes - 1) {
+            sb.append("\n");
+          }
+        }
+      }
+    } catch (Exception e) {
+      sb.append("Error getting palettes: ").append(e.getMessage()).append("\n");
+    }
+
+    try {
+      sb.append("\nHand: ");
+      List<CardModel> hand = (List<CardModel>) model.getHand();
+      if (hand == null || hand.isEmpty()) {
+        sb.append("(empty)");
+      } else {
+        for (int i = 0; i < hand.size(); i++) {
+          sb.append(hand.get(i).toString());
+          if (i < hand.size() - 1) {
+            sb.append(" ");
+          }
+        }
+      }
+    } catch (Exception e) {
+      sb.append("Error getting hand: ").append(e.getMessage());
     }
 
     return sb.toString().trim();
   }
+
 }

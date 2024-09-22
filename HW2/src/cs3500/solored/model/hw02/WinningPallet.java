@@ -146,7 +146,9 @@ public class WinningPallet {
         }
       }
 
-      if (repeatingCount > maxRepeatingCount) {
+      if (repeatingCount > maxRepeatingCount ||
+              (repeatingCount == maxRepeatingCount
+                      && i > palletWithMostRepeats)) {
         maxRepeatingCount = repeatingCount;
         palletWithMostRepeats = i;
       }
@@ -176,7 +178,9 @@ public class WinningPallet {
         }
       }
 
-      if (seenColors.size() > maxDifferentColors) {
+      if (seenColors.size() > maxDifferentColors ||
+              (seenColors.size() == maxDifferentColors
+                      && i > palletWithMostDifferentColors)) {
         maxDifferentColors = seenColors.size();
         palletWithMostDifferentColors = i;
       }
@@ -187,6 +191,7 @@ public class WinningPallet {
 
   /**
    * Determines which pallet has the longest consecutive run of card numbers.
+   * If two pallets have runs of the same length, it will select the pallet with the higher run.
    *
    * @param pallets the list of pallets to evaluate
    * @return the index of the pallet with the longest run, or -1 if no valid run exists
@@ -194,6 +199,7 @@ public class WinningPallet {
   private static int longestRun(List<List<CardModel>> pallets) {
     int palletWithLongestRun = -1;
     int maxRunLength = 0;
+    int highestRunCardValue = 0;
 
     for (int i = 0; i < pallets.size(); i++) {
       List<CardModel> pallet = pallets.get(i);
@@ -210,18 +216,27 @@ public class WinningPallet {
 
       int currentRunLength = 1;
       int longestRunInThisPallet = 1;
+      int highestCardInThisRun = numbers.get(0);
 
       for (int j = 1; j < numbers.size(); j++) {
         if (numbers.get(j) == numbers.get(j - 1) + 1) {
           currentRunLength++;
+          highestCardInThisRun = numbers.get(j);
         } else {
           currentRunLength = 1;
+          highestCardInThisRun = numbers.get(j);
         }
         longestRunInThisPallet = Math.max(longestRunInThisPallet, currentRunLength);
       }
 
-      if (longestRunInThisPallet > maxRunLength) {
+      if (longestRunInThisPallet > maxRunLength
+              || (longestRunInThisPallet == maxRunLength
+              && highestCardInThisRun > highestRunCardValue)
+              || (longestRunInThisPallet == maxRunLength
+              && highestCardInThisRun == highestRunCardValue
+              && i > palletWithLongestRun)) {
         maxRunLength = longestRunInThisPallet;
+        highestRunCardValue = highestCardInThisRun;
         palletWithLongestRun = i;
       }
     }
@@ -249,12 +264,14 @@ public class WinningPallet {
         }
       }
 
-      if (countBelowFour > maxCardsBelowFour) {
+      if (countBelowFour > maxCardsBelowFour ||
+              (countBelowFour == maxCardsBelowFour
+                      && i > palletWithMostCardsBelowFour)) {
         maxCardsBelowFour = countBelowFour;
         palletWithMostCardsBelowFour = i;
       }
     }
 
-    return maxCardsBelowFour > 0 ? palletWithMostCardsBelowFour : -1;
+    return palletWithMostCardsBelowFour != -1 ? palletWithMostCardsBelowFour : 0;
   }
 }

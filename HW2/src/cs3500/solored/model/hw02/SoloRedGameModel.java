@@ -3,19 +3,52 @@ package cs3500.solored.model.hw02;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
-public class SoloRedGameModel implements RedGameModel {
+/**
+ * This class implements the RedGameModel interface for the card game Solo Red.
+ * It models the state of the game, including the deck,
+ * hand, palettes, and the canvas.
+ * It allows for game actions like starting the game, playing cards,
+ * and checking the current game state.
+ */
+public class SoloRedGameModel implements RedGameModel<CardModel> {
   private List<CardModel> deck;
   private List<CardModel> hand;
   private List<List<CardModel>> palettes;
   private CardModel canvas;
+  private int handsize;
   private boolean gameStarted;
   private boolean canvasPlayedThisTurn;
+  private Random rand;
 
+  /**
+   * Default constructor for the SoloRedGameModel.
+   * Initializes the model with a new Random object for randomness.
+   * This constructor prepares the game model,
+   * but the game does not start until startGame() is called.
+   */
   public SoloRedGameModel() {
+    this(new Random());
+  }
+
+  /**
+   * Constructor for the SoloRedGameModel that allows for a custom Random object.
+   * This constructor can be used to inject
+   * a specific Random instance for testing or custom behavior.
+   *
+   *    @param rand the Random object used for shuffling and randomness
+   *    @throws IllegalArgumentException if rand is null
+   */
+  public SoloRedGameModel(Random rand) {
+    if (rand == null) {
+      throw new IllegalArgumentException("Random object cannot be null.");
+    }
+    this.rand = rand;
     this.deck = new ArrayList<>();
     this.hand = new ArrayList<>();
     this.palettes = new ArrayList<>();
+    this.handsize = 0;
     this.canvas = null;
     this.gameStarted = false;
     this.canvasPlayedThisTurn = false;
@@ -45,7 +78,8 @@ public class SoloRedGameModel implements RedGameModel {
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
       throw new IllegalArgumentException("Invalid card index in hand.");
     }
-    if (winningPaletteIndex() == paletteIdx) {
+    int winningIndex = winningPaletteIndex();
+    if (winningIndex == paletteIdx) {
       throw new IllegalStateException("Cannot play to a winning palette.");
     }
 
@@ -76,12 +110,14 @@ public class SoloRedGameModel implements RedGameModel {
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
       throw new IllegalArgumentException("Invalid card index in hand.");
     }
+    if (hand.size() <= 1) {
+      throw new IllegalStateException("Can't play with 1 card.");
+    }
 
     CardModel cardToPlay = hand.remove(cardIdxInHand);
     canvas = cardToPlay;
     canvasPlayedThisTurn = true;
 
-    winningPaletteIndex();
   }
 
   /**
@@ -98,7 +134,7 @@ public class SoloRedGameModel implements RedGameModel {
       throw new IllegalStateException("Game has not started or the game is over.");
     }
 
-    while (hand.size() < 7 && !deck.isEmpty()) {
+    while (hand.size() < handsize && !deck.isEmpty()) {
       hand.add(deck.remove(0));
     }
 
@@ -120,34 +156,50 @@ public class SoloRedGameModel implements RedGameModel {
    * @throws IllegalArgumentException if deck has non-unique cards or null cards
    */
   @Override
-  public void startGame(List deck, boolean shuffle, int numPalettes, int handSize) {
+  public void startGame(List<CardModel> deck, boolean shuffle, int numPalettes, int handSize) {
     if (gameStarted) {
       throw new IllegalStateException("Game has already been started or has already ended.");
     }
+    if (numPalettes < 2) {
+      throw new IllegalArgumentException("Number of palettes must be at least 2.");
+    }
+    if (handSize <= 0) {
+      throw new IllegalArgumentException("Hand size must be greater than 0.");
+    }
+
     if (deck == null || deck.size() < numPalettes + handSize) {
       throw new IllegalArgumentException("Not enough cards to start the game.");
     }
 
-    this.deck = new ArrayList<>(deck);
-    if (shuffle) {
-      Collections.shuffle(this.deck);
+    for (int i = 0; i < deck.size(); i++) {
+      for (int j = i + 1; j < deck.size(); j++) {
+        if (deck.get(i).equals(deck.get(j))) {
+          throw new IllegalArgumentException("Deck contains duplicate cards.");
+        }
+      }
     }
 
-    for (int i = 0; i < handSize; i++) {
-      hand.add(this.deck.remove(0));
+    this.deck = new ArrayList<>(deck);
+    if (shuffle) {
+      Collections.shuffle(this.deck, rand);
     }
 
     palettes = new ArrayList<>();
     for (int i = 0; i < numPalettes; i++) {
       List<CardModel> palette = new ArrayList<>();
-      palette.add(new CardModel(this.deck.get(0).getColor(), this.deck.get(0).getNumber()));
-      this.deck.remove(0);
+      palette.add(this.deck.remove(0));
       this.palettes.add(palette);
+    }
+
+    this.handsize = handSize;
+    for (int i = 0; i < handSize; i++) {
+      hand.add(this.deck.remove(0));
     }
 
     canvas = new CardModel("R", 0);
     gameStarted = true;
   }
+
 
   /**
    * Returns the number of cards remaining in the deck used in the game.
@@ -202,7 +254,19 @@ public class SoloRedGameModel implements RedGameModel {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
-    return hand.isEmpty() && deck.isEmpty();
+
+    if (hand.isEmpty() && deck.isEmpty()) {
+      return true;
+    }
+    int winningIndex = winningPaletteIndex();
+
+    for (int i = 0; i < palettes.size(); i++) {
+      if (i != winningIndex && !palettes.get(i).isEmpty()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**
@@ -213,16 +277,25 @@ public class SoloRedGameModel implements RedGameModel {
    */
   @Override
   public boolean isGameWon() {
-    return isGameOver();
-  }
+    if (!gameStarted) {
+      throw new IllegalStateException("Game has not been started");
+    }
 
+    if (!isGameOver()) {
+      return false;
+    }
+
+    int winningIndex = winningPaletteIndex();
+    return (winningIndex == 0);
+  }
   /**
    * Returns a copy of the hand in the game. This means modifying the returned list
    * or the cards in the list has no effect on the game.
    *
-   *    @return a new list containing the cards in the player's hand in the same order
-   *    as in the current state of the game.
-   *    @throws IllegalStateException if the game has not started
+   * <p>
+   * @return a new list containing the cards in the player's hand in the same order
+   *     as in the current state of the game.
+   * @throws IllegalStateException if the game has not started
    */
   @Override
   public List<CardModel> getHand() {
@@ -233,14 +306,15 @@ public class SoloRedGameModel implements RedGameModel {
   }
 
   /**
-   * Returns a copy of the specified palette. This means modifying the returned list
-   * or the cards in the list has no effect on the game.
+   * Returns a copy of the palette.
    *
-   *    @param paletteNum 0-based index of a particular palette
-   *    @return a new list containing the cards in specified palette in the same order
-   *    as in the current state of the game.
-   *    @throws IllegalStateException    if the game has not started
-   *    @throws IllegalArgumentException if paletteIdx < 0 or more than the number of palettes
+   * <p>
+   * @param paletteNum 0-based index of a particular palette
+   * @return a new list containing the cards in the specified palette in the same order
+   *     as in the current state of the game.
+   * @throws IllegalStateException if the game has not started
+   * @throws IllegalArgumentException if paletteIdx is less than 0 or
+   *     greater than the number of palettes
    */
   @Override
   public List<CardModel> getPalette(int paletteNum) {

@@ -4,7 +4,7 @@ package cs3500.solored.view.hw02;
  * Behaviors needed for a view of the RedSeven implementation
  * that transmits information to the user.
  */
-public interface RedSevenView {
+public interface RedGameView {
 
   /**
    * Creates a String with state of the game.
