@@ -255,18 +255,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       throw new IllegalStateException("Game has not been started");
     }
 
-    if (hand.isEmpty() && deck.isEmpty()) {
-      return true;
-    }
-    int winningIndex = winningPaletteIndex();
-
-    for (int i = 0; i < palettes.size(); i++) {
-      if (i != winningIndex && !palettes.get(i).isEmpty()) {
-        return false;
-      }
-    }
-
-    return true;
+    return hand.isEmpty() && deck.isEmpty();
   }
 
   /**
@@ -275,6 +264,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
    * @return true if the game has been won or false if the game has not
    * @throws IllegalStateException if the game has not started or the game is not over
    */
+  // TODO: FIGURE THIS OUT
   @Override
   public boolean isGameWon() {
     if (!gameStarted) {
@@ -288,6 +278,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
     int winningIndex = winningPaletteIndex();
     return (winningIndex == 0);
   }
+
   /**
    * Returns a copy of the hand in the game. This means modifying the returned list
    * or the cards in the list has no effect on the game.
