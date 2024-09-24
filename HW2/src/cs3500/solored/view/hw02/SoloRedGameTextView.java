@@ -42,12 +42,12 @@ public class SoloRedGameTextView implements RedGameView {
     try {
       CardModel canvasCard = (CardModel) model.getCanvas();
       if (canvasCard == null) {
-        sb.append("Canvas: (empty)").append("\n");
+        throw new IllegalArgumentException("No canvas available.");
       } else {
         sb.append("Canvas: ").append(canvasCard.getColor()).append("\n");
       }
     } catch (Exception e) {
-      sb.append("Error getting canvas: ").append(e.getMessage()).append("\n");
+      throw new IllegalArgumentException("Could not get canvas", e);
     }
 
     try {
@@ -64,7 +64,7 @@ public class SoloRedGameTextView implements RedGameView {
           try {
             List<CardModel> palette = (List<CardModel>) model.getPalette(i);
             if (palette == null || palette.isEmpty()) {
-              sb.append("(empty)");
+              throw new IllegalArgumentException("No palettes available.");
             } else {
               for (int j = 0; j < palette.size(); j++) {
                 sb.append(palette.get(j).toString());
@@ -74,7 +74,7 @@ public class SoloRedGameTextView implements RedGameView {
               }
             }
           } catch (Exception e) {
-            sb.append("(Error getting palette: ").append(e.getMessage()).append(")");
+            throw new IllegalArgumentException("Could not get palette", e);
           }
           if (i < numPalettes - 1) {
             sb.append("\n");
@@ -82,14 +82,14 @@ public class SoloRedGameTextView implements RedGameView {
         }
       }
     } catch (Exception e) {
-      sb.append("Error getting palettes: ").append(e.getMessage()).append("\n");
+      throw new IllegalArgumentException("Could not get palette", e);
     }
 
     try {
       sb.append("\nHand: ");
       List<CardModel> hand = (List<CardModel>) model.getHand();
       if (hand == null || hand.isEmpty()) {
-        sb.append("(empty)");
+        throw new IllegalArgumentException("No hand available.");
       } else {
         for (int i = 0; i < hand.size(); i++) {
           sb.append(hand.get(i).toString());
@@ -99,7 +99,7 @@ public class SoloRedGameTextView implements RedGameView {
         }
       }
     } catch (Exception e) {
-      sb.append("Error getting hand: ").append(e.getMessage());
+      throw new IllegalArgumentException("Could not get hand", e);
     }
 
     return sb.toString().trim();

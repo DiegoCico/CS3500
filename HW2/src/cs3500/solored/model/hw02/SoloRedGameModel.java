@@ -16,6 +16,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
   private List<CardModel> deck;
   private List<CardModel> hand;
   private List<List<CardModel>> palettes;
+  private boolean gameOver;
   private CardModel canvas;
   private int handsize;
   private boolean gameStarted;
@@ -52,6 +53,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
     this.canvas = null;
     this.gameStarted = false;
     this.canvasPlayedThisTurn = false;
+    this.gameOver = false;
   }
 
   /**
@@ -85,6 +87,10 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
 
     CardModel cardToPlay = hand.remove(cardIdxInHand);
     palettes.get(paletteIdx).add(cardToPlay);
+
+    if (winningPaletteIndex() != paletteIdx) {
+      gameOver = true;
+    }
   }
 
   /**
@@ -254,7 +260,9 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
-
+    if (gameOver) {
+      return true;
+    }
     return hand.isEmpty() && deck.isEmpty();
   }
 
@@ -264,26 +272,22 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
    * @return true if the game has been won or false if the game has not
    * @throws IllegalStateException if the game has not started or the game is not over
    */
-  // TODO: FIGURE THIS OUT
   @Override
   public boolean isGameWon() {
     if (!gameStarted) {
       throw new IllegalStateException("Game has not been started");
     }
 
-    if (!isGameOver()) {
-      return false;
-    }
-
-    int winningIndex = winningPaletteIndex();
-    return (winningIndex == 0);
+    return hand.isEmpty() && deck.isEmpty();
   }
 
   /**
    * Returns a copy of the hand in the game. This means modifying the returned list
    * or the cards in the list has no effect on the game.
    *
-   * <p>
+   * <p>Returns a new list containing the cards in the player's hand in the same order
+   * as in the current state of the game.
+   *
    * @return a new list containing the cards in the player's hand in the same order
    *     as in the current state of the game.
    * @throws IllegalStateException if the game has not started
@@ -299,7 +303,9 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
   /**
    * Returns a copy of the palette.
    *
-   * <p>
+   * <p>Returns a new list containing the cards in the specified palette in the same order
+   * as in the current state of the game.
+   *
    * @param paletteNum 0-based index of a particular palette
    * @return a new list containing the cards in the specified palette in the same order
    *     as in the current state of the game.
@@ -330,8 +336,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
     if (!gameStarted || isGameOver()) {
       throw new IllegalStateException("Game has not been started or Game is already ended.");
     }
-    CardModel copy = new CardModel(canvas.getColor(), canvas.getNumber());
-    return copy;
+    return new CardModel(canvas.getColor(), canvas.getNumber());
   }
 
   /**

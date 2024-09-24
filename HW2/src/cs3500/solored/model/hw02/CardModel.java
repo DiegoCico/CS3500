@@ -1,5 +1,7 @@
 package cs3500.solored.model.hw02;
 
+import java.util.Objects;
+
 /**
  * Represents a card in the game with a color and a number.
  */
@@ -45,5 +47,36 @@ public class CardModel implements Card {
   @Override
   public String toString() {
     return color + number;
+  }
+
+  /**
+   * Overrides the equals method to compare two CardModel objects.
+   *
+   * @param obj the object to compare with this card
+   * @return true if both the color and number are the same, false otherwise
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+
+    CardModel otherCard = (CardModel) obj;
+
+    return number == otherCard.number && Objects.equals(color, otherCard.color);
+  }
+
+  /**
+   * Overrides the hashCode method to ensure consistency with equals.
+   *
+   * @return a hash code based on color and number
+   */
+  @Override
+  public int hashCode() {
+    return Objects.hash(color, number);
   }
 }

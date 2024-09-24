@@ -315,7 +315,6 @@ public class WinningPallet {
    * @param tiedPallets the indices of the tied pallets
    * @return the index of the winning pallet after using the highest card rule
    */
-  // TODO: CHANGING THIS METHOD TOOK AWAY 1 POINT FOR HIDDEN TESTS
   private static int breakTieUsingHighestCard(List<List<CardModel>> pallets,
                                               List<Integer> tiedPallets) {
     List<List<CardModel>> tiedPalletsList = new ArrayList<>();
