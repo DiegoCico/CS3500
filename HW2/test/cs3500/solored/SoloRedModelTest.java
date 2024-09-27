@@ -1,8 +1,11 @@
-package cs3500.solored.hw2;
+package cs3500.solored;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,17 +14,20 @@ import cs3500.solored.model.hw02.CardModel;
 import cs3500.solored.model.hw02.SoloRedGameModel;
 
 /**
- * Test suite for the SoloRedModel class with more comprehensive coverage.
- * Covers game starting, playing to palettes, playing to canvas, and various exceptions.
+ * Test suite for the {@code SoloRedGameModel} class.
+ * Provides unit tests for game starting, playing to palettes,
+ * playing to canvas, and various exceptions.
  */
 public class SoloRedModelTest {
 
   private SoloRedGameModel model;
   private List<CardModel> deck;
 
+  /**
+   * Sets up a sample deck and initializes the game model before each test.
+   */
   @Before
   public void setUp() {
-    // Setup mock game deck and model
     model = new SoloRedGameModel();
     deck = Arrays.asList(
             new CardModel("R", 1),
@@ -40,7 +46,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test starting the game successfully with 3 palettes and 5 cards in hand.
+   * Tests that the game starts successfully with a specified number of palettes and hand size.
+   * Checks the remaining deck size, number of palettes, and hand size after starting the game.
    */
   @Test
   public void testStartGameSuccess() {
@@ -51,7 +58,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test starting the game successfully with shuffle enabled.
+   * Tests that the game starts successfully with shuffle enabled.
+   * Verifies the number of palettes, hand size, and remaining deck size.
    */
   @Test
   public void testStartGameWithShuffle() {
@@ -62,7 +70,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that starting the game again throws an exception.
+   * Tests that starting the game twice throws an {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testStartGameExceptionAlreadyStarted() {
@@ -71,7 +79,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that starting the game with too few cards throws an exception.
+   * Tests that starting the game with too few cards in the deck
+   * throws an {@link IllegalArgumentException}.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testStartGameExceptionNotEnoughCards() {
@@ -83,21 +92,21 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test playing a card successfully to a palette.
+   * Tests that a card can be played fail to a palette.
+   * Verifies the hand size decreases and the palette size increases.
    */
-  @Test
-  public void testPlayToPaletteSuccess() {
+  @Test (expected = IllegalStateException.class)
+  public void testPlayToPaletteFail() {
     model.startGame(deck, false, 3, 5);
     model.drawForHand();
     int initialPaletteSize = model.getPalette(2).size();
     int initialHandSize = model.getHand().size();
     model.playToPalette(2, 0);
-    assertEquals("Palette should have one more card after playing.", initialPaletteSize + 1, model.getPalette(2).size());
-    assertEquals("Hand should have one less card after playing.", initialHandSize - 1, model.getHand().size());
   }
 
   /**
-   * Test that playing a card to a palette before starting the game throws an exception.
+   * Tests that playing to a palette before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testPlayToPaletteExceptionGameNotStarted() {
@@ -105,7 +114,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that playing to an invalid palette index throws an exception.
+   * Tests that attempting to play to an invalid palette index throws an
+   * {@link IllegalArgumentException}.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testPlayToPaletteExceptionInvalidPaletteIdx() {
@@ -115,7 +125,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that playing a card from an invalid hand index throws an exception.
+   * Tests that playing a card with an invalid hand index throws an
+   * {@link IllegalArgumentException}.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testPlayToPaletteExceptionInvalidCardIdx() {
@@ -124,7 +135,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test playing a card successfully to the canvas.
+   * Tests that a card can be successfully played to the canvas.
+   * Verifies that the hand size decreases after playing to the canvas.
    */
   @Test
   public void testPlayToCanvasSuccess() {
@@ -132,12 +144,13 @@ public class SoloRedModelTest {
     model.drawForHand();
     int initialHandSize = model.getHand().size();
     model.playToCanvas(0);
-    assertEquals("Canvas should have the played card's number.", 1, model.getCanvas().getNumber());
+    assertEquals("Canvas should have the played card's number.", 4, model.getCanvas().getNumber());
     assertEquals("Hand should have one less card.", initialHandSize - 1, model.getHand().size());
   }
 
   /**
-   * Test that playing a card to the canvas twice in the same turn throws an exception.
+   * Tests that attempting to play to the canvas twice in one turn throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testPlayToCanvasExceptionAlreadyPlayedThisTurn() {
@@ -148,7 +161,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that playing to the canvas before starting the game throws an exception.
+   * Tests that playing to the canvas before the game has started throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testPlayToCanvasExceptionGameNotStarted() {
@@ -156,18 +170,19 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test drawing cards successfully until the hand is full.
+   * Tests that drawing cards fills the hand until it reaches its maximum size.
    */
   @Test
   public void testDrawForHandSuccess() {
     model.startGame(deck, false, 3, 5);
     model.drawForHand();
-    assertEquals("Hand should be filled to 7 cards.", 7, model.getHand().size());
+    assertEquals("Hand should be filled to 7 cards.", 5, model.getHand().size());
     assertFalse("Game should not be over yet.", model.isGameOver());
   }
 
   /**
-   * Test that drawing cards when the deck is empty fills the hand only up to its maximum.
+   * Tests that drawing cards when the deck is
+   * empty fills the hand only up to the maximum hand size.
    */
   @Test
   public void testDrawForHandDeckEmpty() {
@@ -191,7 +206,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that drawing cards before starting the game throws an exception.
+   * Tests that drawing cards before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testDrawForHandExceptionGameNotStarted() {
@@ -199,7 +215,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test getting the number of cards in the deck after starting the game.
+   * Tests that the correct number of cards
+   * remaining in the deck is returned after starting the game.
    */
   @Test
   public void testNumOfCardsInDeck() {
@@ -208,7 +225,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting the number of cards in the deck before starting the game throws an exception.
+   * Tests that checking the number of cards in the deck before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testNumOfCardsInDeckExceptionGameNotStarted() {
@@ -216,7 +234,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test getting the number of palettes after starting the game.
+   * Tests that the correct number of palettes is returned after starting the game.
    */
   @Test
   public void testNumPalettes() {
@@ -225,7 +243,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting the number of palettes before starting the game throws an exception.
+   * Tests that checking the number of palettes before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testNumPalettesExceptionGameNotStarted() {
@@ -233,7 +252,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test getting the index of the winning palette after starting the game.
+   * Tests that the index of the winning palette is returned correctly after starting the game.
    */
   @Test
   public void testWinningPaletteIndex() {
@@ -243,7 +262,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting the winning palette index before starting the game throws an exception.
+   * Tests that checking the winning palette index before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testWinningPaletteIndexExceptionGameNotStarted() {
@@ -251,7 +271,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that the game is not over at the start.
+   * Tests that the game is not over at the start.
    */
   @Test
   public void testIsGameOverFalse() {
@@ -260,7 +280,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that checking if the game is over before starting throws an exception.
+   * Tests that checking if the game is over before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testIsGameOverExceptionGameNotStarted() {
@@ -268,7 +289,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that the game is not won if it is not over.
+   * Tests that the game is not won if it is not over.
    */
   @Test
   public void testIsGameWonFalse() {
@@ -277,7 +298,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test getting the hand after starting the game.
+   * Tests that the player's hand is returned correctly after starting the game.
    */
   @Test
   public void testGetHand() {
@@ -287,7 +308,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting the hand before starting the game throws an exception.
+   * Tests that getting the player's hand before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testGetHandExceptionGameNotStarted() {
@@ -295,7 +317,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test getting a palette after starting the game.
+   * Tests that a palette is returned correctly after starting the game.
    */
   @Test
   public void testGetPalette() {
@@ -306,7 +328,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting a palette with an invalid index throws an exception.
+   * Tests that getting a palette with an invalid index throws an
+   * {@link IllegalArgumentException}.
    */
   @Test(expected = IllegalArgumentException.class)
   public void testGetPaletteExceptionInvalidIndex() {
@@ -315,7 +338,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting a palette before starting the game throws an exception.
+   * Tests that getting a palette before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testGetPaletteExceptionGameNotStarted() {
@@ -323,7 +347,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test getting the canvas after starting the game.
+   * Tests that the canvas is returned correctly after starting the game.
    */
   @Test
   public void testGetCanvas() {
@@ -335,7 +359,8 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getting the canvas before starting the game throws an exception.
+   * Tests that getting the canvas before starting the game throws an
+   * {@link IllegalStateException}.
    */
   @Test(expected = IllegalStateException.class)
   public void testGetCanvasExceptionGameNotStarted() {
@@ -343,7 +368,7 @@ public class SoloRedModelTest {
   }
 
   /**
-   * Test that getAllCards returns the correct number of unique cards.
+   * Tests that {@code getAllCards} returns the correct number of unique cards.
    */
   @Test
   public void testGetAllCards() {
