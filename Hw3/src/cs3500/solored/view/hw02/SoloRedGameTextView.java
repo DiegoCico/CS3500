@@ -3,6 +3,7 @@ package cs3500.solored.view.hw02;
 import cs3500.solored.model.hw02.CardModel;
 import cs3500.solored.model.hw02.RedGameModel;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -11,15 +12,29 @@ import java.util.List;
  */
 public class SoloRedGameTextView implements RedGameView {
   private final RedGameModel<?> model;
+  private final Appendable appendable;
 
   /**
    * Constructs a view for the RedSeven game.
    *
    *    @param model the game model to generate the view for
+   *    @param appendable appends the model in some matter
    */
-  public SoloRedGameTextView(RedGameModel<?> model) {
+  public SoloRedGameTextView(RedGameModel<?> model, Appendable appendable) {
+    if (appendable == null) {
+      throw new IllegalArgumentException("Appendable cannot be null.");
+    }
+    if (model == null) {
+      throw new IllegalArgumentException("Model cannot be null.");
+    }
+    this.appendable = appendable;
     this.model = model;
   }
+
+  public SoloRedGameTextView(RedGameModel<?> model) {
+    this(model, new StringBuilder());
+  }
+
 
   /**
    * Provides a string representation of the current game state, including:
@@ -40,14 +55,13 @@ public class SoloRedGameTextView implements RedGameView {
     StringBuilder sb = new StringBuilder();
 
     try {
-      CardModel canvasCard = (CardModel) model.getCanvas();
-      if (canvasCard == null) {
+      if (model.getCanvas() == null) {
         throw new IllegalArgumentException("No canvas available.");
       } else {
-        sb.append("Canvas: ").append(canvasCard.getColor()).append("\n");
+        sb.append("Canvas: ").append(model.getCanvas().toString().charAt(0)).append("\n");
       }
     } catch (Exception e) {
-      throw new IllegalArgumentException("Could not get canvas", e);
+      sb.append("\n");
     }
 
     try {
@@ -74,22 +88,20 @@ public class SoloRedGameTextView implements RedGameView {
               }
             }
           } catch (Exception e) {
-            throw new IllegalArgumentException("Could not get palette", e);
+
           }
-          if (i < numPalettes - 1) {
-            sb.append("\n");
-          }
+          sb.append("\n");
         }
       }
     } catch (Exception e) {
-      throw new IllegalArgumentException("Could not get palette", e);
+
     }
 
     try {
-      sb.append("\nHand: ");
+      sb.append("Hand: ");
       List<CardModel> hand = (List<CardModel>) model.getHand();
       if (hand == null || hand.isEmpty()) {
-        throw new IllegalArgumentException("No hand available.");
+        sb.append("");
       } else {
         for (int i = 0; i < hand.size(); i++) {
           sb.append(hand.get(i).toString());
@@ -99,10 +111,23 @@ public class SoloRedGameTextView implements RedGameView {
         }
       }
     } catch (Exception e) {
-      throw new IllegalArgumentException("Could not get hand", e);
+
     }
 
-    return sb.toString().trim();
+    return sb.toString();
   }
+
+  @Override
+  public void render() throws IOException {
+    String result = this.toString();
+//    if (!result.endsWith("\n")) {
+//      result += "\n";
+//    }
+//    appendable.append(result);
+//
+    appendable.append(result);
+  }
+
+
 
 }

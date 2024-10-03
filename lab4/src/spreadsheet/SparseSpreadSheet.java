@@ -25,7 +25,7 @@ public class SparseSpreadSheet implements SpreadSheet {
   @Override
   public double get(int row, int col) throws IllegalArgumentException {
     if ((row < 0) || (col < 0)) {
-      throw new IllegalArgumentException("Row or column cannot be negative");
+      throw new IllegalArgumentException("Row or colum  n cannot be negative");
     }
     return this.sheet.getOrDefault(new CellPosition(row, col), 0.0);
   }

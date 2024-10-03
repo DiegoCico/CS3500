@@ -19,10 +19,10 @@ public class CardModel implements Card {
    * @param number the number on the card
    */
   public CardModel(String color, int number) {
-    if (!Arrays.asList(new String[]{"R", "O", "V", "I", "V"}).contains(color)) {
+    if (!Arrays.asList(new String[]{"R", "O", "V", "I", "B"}).contains(color)) {
       throw new IllegalArgumentException("Invalid color: " + color);
-    } else if (number < 1 || number > 7) {
-      throw new IllegalArgumentException("Invalid number: " + number);
+    } else if (number < 0 || number > 7) {
+      throw new IllegalArgumentException("Invalid  number: " + number);
     }
     this.color = color;
     this.number = number;
