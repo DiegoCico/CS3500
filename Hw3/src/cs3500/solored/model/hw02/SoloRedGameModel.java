@@ -75,10 +75,10 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       throw new IllegalStateException("Game is over or game has not started.");
     }
     if (paletteIdx < 0 || paletteIdx >= palettes.size()) {
-      throw new IllegalArgumentException("Invalid palette index.");
+      throw new IllegalArgumentException("Invalid palette index: " + paletteIdx);
     }
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
-      throw new IllegalArgumentException("Invalid card index in hand.");
+      throw new IllegalArgumentException("Invalid card index in hand: " + cardIdxInHand);
     }
     int winningIndex = winningPaletteIndex();
     if (winningIndex == paletteIdx) {
@@ -92,6 +92,7 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       gameOver = true;
     }
   }
+
 
   /**
    * Play the given card from the hand to the canvas.
@@ -114,17 +115,17 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       throw new IllegalStateException("Canvas has already been played this turn.");
     }
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
-      throw new IllegalArgumentException("Invalid card index in hand.");
+      throw new IllegalArgumentException("Invalid card index in hand: " + cardIdxInHand);
     }
     if (hand.size() <= 1) {
-      throw new IllegalStateException("Can't play with 1 card.");
+      throw new IllegalStateException("Can't play with only 1 card.");
     }
 
     CardModel cardToPlay = hand.remove(cardIdxInHand);
     canvas = cardToPlay;
     canvasPlayedThisTurn = true;
-
   }
+
 
   /**
    * Draws cards from the deck until the hand is full (has 7 cards)
@@ -172,7 +173,6 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
     if (handSize <= 0) {
       throw new IllegalArgumentException("Hand size must be greater than 0.");
     }
-
     if (deck == null || deck.size() < numPalettes + handSize) {
       throw new IllegalArgumentException("Not enough cards to start the game.");
     }
@@ -205,7 +205,6 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
     canvas = new CardModel("R", 0);
     gameStarted = true;
   }
-
 
   /**
    * Returns the number of cards remaining in the deck used in the game.

@@ -1,14 +1,14 @@
 package cs3500.solored.controller;
 
 import cs3500.solored.model.hw02.Card;
-import cs3500.solored.model.hw02.CardModel;
 import cs3500.solored.model.hw02.RedGameModel;
-import cs3500.solored.model.hw02.SoloRedGameModel;
-import cs3500.solored.view.hw02.RedGameView;
 import cs3500.solored.view.hw02.SoloRedGameTextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -16,9 +16,10 @@ import java.util.Scanner;
  */
 public class SoloRedTextController implements RedGameController {
 
-  private final Readable rd;
   private final Appendable ap;
-  private final SoloRedGameTextView view;
+  private SoloRedGameTextView view;
+  private final Scanner scan;
+  private boolean gameOver;
 
   /**
    * Constructs a controller that operates on the given Readable and Appendable.
@@ -30,9 +31,9 @@ public class SoloRedTextController implements RedGameController {
     if (rd == null || ap == null) {
       throw new IllegalArgumentException("Readable, Appendable cannot be null.");
     }
-    this.rd = rd;
+    scan = new Scanner(rd);
     this.ap = ap;
-    this.view = new SoloRedGameTextView(new SoloRedGameModel());
+    this.gameOver = false;
   }
 
   @Override
@@ -41,40 +42,153 @@ public class SoloRedTextController implements RedGameController {
       throw new IllegalArgumentException("Model or deck cannot be null.");
     }
 
-    Scanner scanner = new Scanner(this.rd);
-    String userInput = scanner.nextLine();
-
-    String[] commands = userInput.split("\\s+");
-
     try {
       model.startGame(deck, shuffle, numPalettes, handSize);
+      this.view = new SoloRedGameTextView(model);
 
-      int i = 0;
-      while (!model.isGameOver() && i < commands.length) {
-        this.view.render();
-        transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+      while (!model.isGameOver() && scan.hasNext()) {
+        String userInput = scan.next();
 
-        String command = commands[i];
-        if (command.equalsIgnoreCase("q")) {
-          transmit("Game quit!");
-          transmit("State of game when quit:");
-          this.view.render();
-          transmit("Remaining cards in deck: " + model.numOfCardsInDeck());
-          return;
+        if (userInput.equalsIgnoreCase("q")) {
+          gameQuit(model);
+        } else if (userInput.equalsIgnoreCase("canvas")) {
+          try {
+            List<Integer> choice = validNumber(0, model);
+            updateCanvas(choice.get(0), model);
+          } catch (IndexOutOfBoundsException ignore) {
+
+          }
+        } else if (userInput.equalsIgnoreCase("palette")) {
+          try {
+            List<Integer> choice = validNumber(1, model);
+            updatePallete(choice.get(0), choice.get(1), model);
+          } catch (IndexOutOfBoundsException ignore) {
+
+          }
+        } else {
+          transmit("Invalid command. Try again. " + userInput);
         }
 
-        processMove(command, model);
-        i++;
+        if (!checkGameStatus(model) || gameOver) {
+          return;
+        } else {
+          transmit(this.view.toString());
+          transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+        }
       }
 
-      this.view.render();
-      transmit("Number of cards in deck: " + model.numOfCardsInDeck());
-      transmit(model.isGameWon() ? "Game won." : "Game lost.");
-
     } catch (IOException e) {
-      throw new IllegalStateException("Error transmitting output.", e);
+      throw new IllegalStateException("Error transmitting output", e);
     }
   }
+
+  private List<Integer> validNumber(int mode, RedGameModel<?> model) {
+    if (mode == 0) {
+      while (scan.hasNext()) {
+        String input = scan.next();
+        if (input.equalsIgnoreCase("q")) {
+          try {
+            gameQuit(model);
+            return List.of();
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        }
+
+        try {
+          int num = Integer.parseInt(input);
+
+          if (num > 0 && num <= model.getHand().size()) {
+            return List.of(num);
+          }
+        } catch (NumberFormatException ignored) {
+
+        }
+      }
+    } else {
+      List<Integer> lastTwoInts = new ArrayList<>();
+
+      while (scan.hasNext()) {
+        String input = scan.next();
+
+        if (input.equalsIgnoreCase("q")) {
+          try {
+            gameQuit(model);
+            return List.of();
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        }
+
+        try {
+          int num = Integer.parseInt(input);
+
+          if (num > 0 && num <= model.getHand().size()) {
+            lastTwoInts.add(num);
+
+            if (lastTwoInts.size() == 2) {
+              return lastTwoInts;
+            }
+          }
+        } catch (NumberFormatException ignored) {
+
+        }
+      }
+
+    }
+
+    return Collections.emptyList();
+  }
+
+
+
+  private boolean checkGameStatus(RedGameModel<?> model) throws IOException {
+    if (model.isGameOver()) {
+      if (model.isGameWon()) {
+        transmit("Game won.");
+        transmit(this.view.toString());
+        transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+        return false;
+      } else {
+        transmit("Game lost.");
+        transmit(this.view.toString());
+        transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private void gameQuit(RedGameModel<?> model) throws IOException {
+    transmit("Game quit!");
+    transmit("State of game when quit:");
+    transmit(this.view.toString());
+    transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+    this.gameOver = true;
+  }
+
+  private void updateCanvas(Integer userInput, RedGameModel<?> model) {
+    try {
+      model.playToCanvas(userInput);
+      model.drawForHand();
+    } catch (IllegalArgumentException | NoSuchElementException | IndexOutOfBoundsException e) {
+      transmit("Invalid move. Try again. Invalid canvas index.");
+    } catch (IllegalStateException e) {
+      transmit("Invalid move. Try again. Invalid canvas has been already played.");
+    }
+  }
+
+  private void updatePallete(Integer palleteIdx, Integer handIdx, RedGameModel<?> model) {
+    try {
+      model.playToPalette(palleteIdx, handIdx);
+      model.drawForHand();
+    } catch (IllegalArgumentException | NoSuchElementException  e) {
+      transmit("Invalid move. Try again. Invalid palette index.");
+    } catch (IllegalStateException | IndexOutOfBoundsException e) {
+      transmit("Invalid move. Try again. Palette is currently winning.");
+    }
+  }
+
 
   @Override
   public void transmit(String message) {
@@ -85,26 +199,5 @@ public class SoloRedTextController implements RedGameController {
     }
   }
 
-  private <C extends Card> void processMove(String userInput, RedGameModel<C> model) throws IOException {
-    String[] inputs = userInput.split("\\s+");
 
-    if (inputs.length == 3 && inputs[0].equalsIgnoreCase("palette")) {
-      try {
-        int paletteIndex = Integer.parseInt(inputs[1]) - 1;
-        int cardIndex = Integer.parseInt(inputs[2]) - 1;
-        model.playToPalette(paletteIndex, cardIndex);
-      } catch (IllegalArgumentException e) {
-        transmit("Invalid move. Try again.");
-      }
-    } else if (inputs.length == 2 && inputs[0].equalsIgnoreCase("canvas")) {
-      try {
-        int cardIndex = Integer.parseInt(inputs[1]) - 1;
-        model.playToCanvas(cardIndex);
-      } catch (IllegalArgumentException e) {
-        transmit("Invalid move. Try again.");
-      }
-    } else {
-      transmit("Invalid command. Try again.");
-    }
-  }
 }

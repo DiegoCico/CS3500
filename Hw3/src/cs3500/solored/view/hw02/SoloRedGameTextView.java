@@ -17,15 +17,12 @@ public class SoloRedGameTextView implements RedGameView {
   /**
    * Constructs a view for the RedSeven game.
    *
-   *    @param model the game model to generate the view for
-   *    @param appendable appends the model in some matter
+   * @param model      the game model to generate the view for
+   * @param appendable appends the model in some matter
    */
   public SoloRedGameTextView(RedGameModel<?> model, Appendable appendable) {
-    if (appendable == null) {
-      throw new IllegalArgumentException("Appendable cannot be null.");
-    }
-    if (model == null) {
-      throw new IllegalArgumentException("Model cannot be null.");
+    if (appendable == null || model == null) {
+      throw new IllegalArgumentException("Model and Appendable cannot be null.");
     }
     this.appendable = appendable;
     this.model = model;
@@ -35,18 +32,10 @@ public class SoloRedGameTextView implements RedGameView {
     this(model, new StringBuilder());
   }
 
-
   /**
    * Provides a string representation of the current game state, including:
    * The canvas card, each palette's cards, the player's hand,
    * and the winning palette indicated by the ">" symbol.
-   *
-   * <p>Edge cases handled:
-   * <ul>
-   *   <li>No canvas card</li>
-   *   <li>No palettes or empty palettes</li>
-   *   <li>Empty hand</li>
-   * </ul>
    *
    * @return a formatted string representing the game state
    */
@@ -54,49 +43,76 @@ public class SoloRedGameTextView implements RedGameView {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
+    appendCanvas(sb);
+    appendPalettes(sb);
+    appendHand(sb);
+
+    return sb.toString();
+  }
+
+  /**
+   * Helper method to append the canvas state to the string builder.
+   */
+  private void appendCanvas(StringBuilder sb) {
     try {
-      if (model.getCanvas() == null) {
-        throw new IllegalArgumentException("No canvas available.");
-      } else {
+      if (model.getCanvas() != null) {
         sb.append("Canvas: ").append(model.getCanvas().toString().charAt(0)).append("\n");
+      } else {
+        sb.append("Canvas: \n");
       }
     } catch (Exception e) {
       sb.append("\n");
     }
+  }
 
+  /**
+   * Helper method to append the palettes state to the string builder.
+   */
+  private void appendPalettes(StringBuilder sb) {
     try {
       int numPalettes = model.numPalettes();
       if (numPalettes == 0) {
         throw new IllegalArgumentException("No palettes available.");
-      } else {
-        for (int i = 0; i < numPalettes; i++) {
-          if (i == model.winningPaletteIndex()) {
-            sb.append("> ");
-          }
-          sb.append("P").append(i + 1).append(": ");
+      }
 
-          try {
-            List<CardModel> palette = (List<CardModel>) model.getPalette(i);
-            if (palette == null || palette.isEmpty()) {
-              throw new IllegalArgumentException("No palettes available.");
-            } else {
-              for (int j = 0; j < palette.size(); j++) {
-                sb.append(palette.get(j).toString());
-                if (j < palette.size() - 1) {
-                  sb.append(" ");
-                }
-              }
-            }
-          } catch (Exception e) {
+      for (int i = 0; i < numPalettes; i++) {
+        if (i == model.winningPaletteIndex()) {
+          sb.append("> ");
+        }
+        sb.append("P").append(i + 1).append(": ");
+        appendPaletteCards(sb, i);
+        sb.append("\n");
+      }
+    } catch (Exception e) {
+      sb.append("\n");
+    }
+  }
 
-          }
-          sb.append("\n");
+  /**
+   * Helper method to append the cards of a specific palette to the string builder.
+   */
+  private void appendPaletteCards(StringBuilder sb, int paletteIndex) {
+    try {
+      List<CardModel> palette = (List<CardModel>) model.getPalette(paletteIndex);
+      if (palette == null || palette.isEmpty()) {
+        throw new IllegalArgumentException("No palettes available.");
+      }
+
+      for (int j = 0; j < palette.size(); j++) {
+        sb.append(palette.get(j).toString());
+        if (j < palette.size() - 1) {
+          sb.append(" ");
         }
       }
     } catch (Exception e) {
-
+      sb.append("");
     }
+  }
 
+  /**
+   * Helper method to append the hand state to the string builder.
+   */
+  private void appendHand(StringBuilder sb) {
     try {
       sb.append("Hand: ");
       List<CardModel> hand = (List<CardModel>) model.getHand();
@@ -111,23 +127,12 @@ public class SoloRedGameTextView implements RedGameView {
         }
       }
     } catch (Exception e) {
-
+      sb.append("");
     }
-
-    return sb.toString();
   }
 
   @Override
   public void render() throws IOException {
-    String result = this.toString();
-//    if (!result.endsWith("\n")) {
-//      result += "\n";
-//    }
-//    appendable.append(result);
-//
-    appendable.append(result);
+    appendable.append(this.toString());
   }
-
-
-
 }
