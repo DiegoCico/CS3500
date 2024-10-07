@@ -45,6 +45,8 @@ public class SoloRedTextController implements RedGameController {
     try {
       model.startGame(deck, shuffle, numPalettes, handSize);
       this.view = new SoloRedGameTextView(model);
+      transmit(this.view.toString());
+      transmit("Number of cards in deck: " + model.numOfCardsInDeck());
 
       while (!model.isGameOver() && scan.hasNext()) {
         String userInput = scan.next();
@@ -54,14 +56,14 @@ public class SoloRedTextController implements RedGameController {
         } else if (userInput.equalsIgnoreCase("canvas")) {
           try {
             List<Integer> choice = validNumber(0, model);
-            updateCanvas(choice.get(0), model);
+            updateCanvas(choice.get(0)-1, model);
           } catch (IndexOutOfBoundsException ignore) {
 
           }
         } else if (userInput.equalsIgnoreCase("palette")) {
           try {
             List<Integer> choice = validNumber(1, model);
-            updatePallete(choice.get(0), choice.get(1), model);
+            updatePallete(choice.get(0)-1, choice.get(1)-1, model);
           } catch (IndexOutOfBoundsException ignore) {
 
           }
@@ -98,7 +100,7 @@ public class SoloRedTextController implements RedGameController {
         try {
           int num = Integer.parseInt(input);
 
-          if (num > 0 && num <= model.getHand().size()) {
+          if (num > 0) {
             return List.of(num);
           }
         } catch (NumberFormatException ignored) {
@@ -123,7 +125,7 @@ public class SoloRedTextController implements RedGameController {
         try {
           int num = Integer.parseInt(input);
 
-          if (num > 0 && num <= model.getHand().size()) {
+          if (num > 0) {
             lastTwoInts.add(num);
 
             if (lastTwoInts.size() == 2) {
@@ -188,7 +190,6 @@ public class SoloRedTextController implements RedGameController {
       transmit("Invalid move. Try again. Palette is currently winning.");
     }
   }
-
 
   @Override
   public void transmit(String message) {
