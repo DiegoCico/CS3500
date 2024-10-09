@@ -54,14 +54,10 @@ public class SoloRedGameTextView implements RedGameView {
    * Helper method to append the canvas state to the string builder.
    */
   private void appendCanvas(StringBuilder sb) {
-    try {
-      if (model.getCanvas() != null) {
-        sb.append("Canvas: ").append(model.getCanvas().toString().charAt(0)).append("\n");
-      } else {
-        sb.append("Canvas: \n");
-      }
-    } catch (Exception e) {
-      sb.append("\n");
+    if (model.getCanvas() != null) {
+      sb.append("Canvas: ").append(model.getCanvas().toString().charAt(0)).append("\n");
+    } else {
+      sb.append("Canvas: (No canvas card available)\n");
     }
   }
 
@@ -69,21 +65,18 @@ public class SoloRedGameTextView implements RedGameView {
    * Helper method to append the palettes state to the string builder.
    */
   private void appendPalettes(StringBuilder sb) {
-    try {
-      int numPalettes = model.numPalettes();
-      if (numPalettes == 0) {
-        throw new IllegalArgumentException("No palettes available.");
-      }
+    int numPalettes = model.numPalettes();
+    if (numPalettes == 0) {
+      sb.append("No palettes available.\n");
+      return;
+    }
 
-      for (int i = 0; i < numPalettes; i++) {
-        if (i == model.winningPaletteIndex()) {
-          sb.append("> ");
-        }
-        sb.append("P").append(i + 1).append(": ");
-        appendPaletteCards(sb, i);
-        sb.append("\n");
+    for (int i = 0; i < numPalettes; i++) {
+      if (i == model.winningPaletteIndex()) {
+        sb.append("> ");
       }
-    } catch (Exception e) {
+      sb.append("P").append(i + 1).append(": ");
+      appendPaletteCards(sb, i);
       sb.append("\n");
     }
   }
@@ -92,20 +85,17 @@ public class SoloRedGameTextView implements RedGameView {
    * Helper method to append the cards of a specific palette to the string builder.
    */
   private void appendPaletteCards(StringBuilder sb, int paletteIndex) {
-    try {
-      List<CardModel> palette = (List<CardModel>) model.getPalette(paletteIndex);
-      if (palette == null || palette.isEmpty()) {
-        throw new IllegalArgumentException("No palettes available.");
-      }
-
-      for (int j = 0; j < palette.size(); j++) {
-        sb.append(palette.get(j).toString());
-        if (j < palette.size() - 1) {
-          sb.append(" ");
-        }
-      }
-    } catch (Exception e) {
+    List<CardModel> palette = (List<CardModel>) model.getPalette(paletteIndex);
+    if (palette == null || palette.isEmpty()) {
       sb.append("");
+      return;
+    }
+
+    for (int j = 0; j < palette.size(); j++) {
+      sb.append(palette.get(j).toString());
+      if (j < palette.size() - 1) {
+        sb.append(" ");
+      }
     }
   }
 
@@ -113,21 +103,17 @@ public class SoloRedGameTextView implements RedGameView {
    * Helper method to append the hand state to the string builder.
    */
   private void appendHand(StringBuilder sb) {
-    try {
-      sb.append("Hand: ");
-      List<CardModel> hand = (List<CardModel>) model.getHand();
-      if (hand == null || hand.isEmpty()) {
-        sb.append("");
-      } else {
-        for (int i = 0; i < hand.size(); i++) {
-          sb.append(hand.get(i).toString());
-          if (i < hand.size() - 1) {
-            sb.append(" ");
-          }
+    sb.append("Hand: ");
+    List<CardModel> hand = (List<CardModel>) model.getHand();
+    if (hand == null || hand.isEmpty()) {
+      sb.append("");
+    } else {
+      for (int i = 0; i < hand.size(); i++) {
+        sb.append(hand.get(i).toString());
+        if (i < hand.size() - 1) {
+          sb.append(" ");
         }
       }
-    } catch (Exception e) {
-      sb.append("");
     }
   }
 

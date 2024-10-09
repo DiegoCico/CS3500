@@ -75,14 +75,15 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       throw new IllegalStateException("Game is over or game has not started.");
     }
     if (paletteIdx < 0 || paletteIdx >= palettes.size()) {
-      throw new IllegalArgumentException("Invalid palette index: " + paletteIdx);
+      throw new IllegalArgumentException("Invalid move. Try again. palette index: " + paletteIdx);
     }
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
-      throw new IllegalArgumentException("Invalid card index in hand: " + cardIdxInHand);
+      throw new IllegalArgumentException("Invalid move. Try again. " +
+              "Invalid card index in hand: " + cardIdxInHand);
     }
     int winningIndex = winningPaletteIndex();
     if (winningIndex == paletteIdx) {
-      throw new IllegalStateException("Cannot play to a winning palette.");
+      throw new IllegalStateException("Invalid move. Try again. Cannot play to a winning palette.");
     }
 
     CardModel cardToPlay = hand.remove(cardIdxInHand);
@@ -112,13 +113,15 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       throw new IllegalStateException("Game is over or game has not started.");
     }
     if (canvasPlayedThisTurn) {
-      throw new IllegalStateException("Canvas has already been played this turn.");
+      throw new IllegalStateException("Invalid move. Try again." +
+              " Canvas has already been played this turn.");
     }
     if (cardIdxInHand < 0 || cardIdxInHand >= hand.size()) {
-      throw new IllegalArgumentException("Invalid card index in hand: " + cardIdxInHand);
+      throw new IllegalArgumentException("Invalid move. Try again." +
+              " Invalid card index in hand: " + cardIdxInHand);
     }
     if (hand.size() <= 1) {
-      throw new IllegalStateException("Can't play with only 1 card.");
+      throw new IllegalStateException("Invalid move. Try again. Can't play with only 1 card.");
     }
 
     CardModel cardToPlay = hand.remove(cardIdxInHand);
@@ -318,7 +321,8 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
       throw new IllegalStateException("Game has not been started");
     }
     if (paletteNum < 0 || paletteNum >= palettes.size()) {
-      throw new IllegalArgumentException("Invalid palette number: " + paletteNum);
+      throw new IllegalArgumentException("Invalid move. Try again. " +
+              "palette number: " + paletteNum);
     }
     return List.copyOf(palettes.get(paletteNum));
   }

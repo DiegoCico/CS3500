@@ -12,7 +12,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * The controller for the Solo Red game, handling input and output for the game.
+ * This class handles the controller for the Solo Red card game.
+ * It deals with receiving input, processing it, and outputting the result.
  */
 public class SoloRedTextController implements RedGameController {
 
@@ -22,12 +23,13 @@ public class SoloRedTextController implements RedGameController {
   private boolean gameOver;
 
   /**
-   * Constructs a controller that operates on the given Readable and Appendable.
-   * @param rd the readable to provide input
-   * @param ap the appendable to display output
+   * Creates a controller for Solo Red, with given input and output.
+   *
+   * @param rd the readable source for user input
+   * @param ap the appendable destination for displaying the game output
    * @throws IllegalArgumentException if rd or ap are null
    */
-  public SoloRedTextController(Readable rd, Appendable ap) throws IllegalArgumentException {
+  public SoloRedTextController(Readable rd, Appendable ap) {
     if (rd == null || ap == null) {
       throw new IllegalArgumentException("Readable, Appendable cannot be null.");
     }
@@ -36,57 +38,100 @@ public class SoloRedTextController implements RedGameController {
     this.gameOver = false;
   }
 
+  /**
+   * Starts and plays the Solo Red game based on the provided model and deck.
+   *
+   * @param model the game model to control
+   * @param deck the deck of cards to play the game with
+   * @param shuffle if the deck should be shuffled
+   * @param numPalettes the number of palettes for the game
+   * @param handSize the size of each player's hand
+   * @throws IllegalArgumentException if the model or deck is null
+   */
   @Override
-  public <C extends Card> void playGame(RedGameModel<C> model, List<C> deck, boolean shuffle, int numPalettes, int handSize) {
+  public <C extends Card> void playGame(RedGameModel<C> model,
+                                        List<C> deck, boolean shuffle,
+                                        int numPalettes, int handSize) {
+    // Validate input parameters
     if (model == null || deck == null) {
       throw new IllegalArgumentException("Model or deck cannot be null.");
     }
+    if (numPalettes < 1 || handSize < 1) {
+      throw new IllegalArgumentException("Number of palettes and hand size" +
+              " must be greater than 0.");
+    }
+
+    boolean paletteWork = false;
 
     try {
       model.startGame(deck, shuffle, numPalettes, handSize);
-      this.view = new SoloRedGameTextView(model);
-      transmit(this.view.toString());
-      transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+      this.view = new SoloRedGameTextView(model, ap);
+      this.view.render();
+      transmit("\nNumber of cards in deck: " + model.numOfCardsInDeck());
 
       while (!model.isGameOver() && scan.hasNext()) {
         String userInput = scan.next();
 
-        if (userInput.equalsIgnoreCase("q")) {
-          gameQuit(model);
-        } else if (userInput.equalsIgnoreCase("canvas")) {
-          try {
-            List<Integer> choice = validNumber(0, model);
-            updateCanvas(choice.get(0)-1, model);
-          } catch (IndexOutOfBoundsException ignore) {
-
-          }
-        } else if (userInput.equalsIgnoreCase("palette")) {
-          try {
-            List<Integer> choice = validNumber(1, model);
-            updatePallete(choice.get(0)-1, choice.get(1)-1, model);
-          } catch (IndexOutOfBoundsException ignore) {
-
-          }
+        if (!userInput.equalsIgnoreCase("canvas") && paletteWork) {
+          model.drawForHand();
         } else {
-          transmit("Invalid command. Try again. " + userInput);
+          paletteWork = false;
+        }
+
+        switch (userInput.toLowerCase()) {
+          case "q":
+            gameQuit(model);
+            return;
+
+          case "canvas":
+            List<Integer> canvasChoice = validNumber(0, model);
+            if (!canvasChoice.isEmpty()) {
+              updateCanvas(canvasChoice.get(0) - 1, model);
+            }
+            break;
+
+          case "palette":
+            List<Integer> paletteChoice = validNumber(1, model);
+            if (paletteChoice.size() >= 2) {
+              updatePallete(paletteChoice.get(0) - 1, paletteChoice.get(1) - 1, model);
+              paletteWork = true;
+            }
+            break;
+
+          default:
+            if (userInput.isEmpty()) {
+              transmit("Invalid command. Try again.");
+            } else {
+              transmit("Invalid command. Try again. " + userInput);
+            }
+            break;
         }
 
         if (!checkGameStatus(model) || gameOver) {
           return;
-        } else {
-          transmit(this.view.toString());
-          transmit("Number of cards in deck: " + model.numOfCardsInDeck());
         }
+
+        this.view.render();
+        transmit("\nNumber of cards in deck: " + model.numOfCardsInDeck());
       }
 
     } catch (IOException e) {
-      throw new IllegalStateException("Error transmitting output", e);
+      throw new IllegalStateException("Error transmitting output.", e);
     }
   }
 
+
+  /**
+   * Validates the user's input as a number and
+   * processes it for either canvas or palette mode.
+   *
+   * @param mode 0 for canvas move, 1 for palette move
+   * @param model the game model being used
+   * @return a list of valid numbers based on the user input
+   */
   private List<Integer> validNumber(int mode, RedGameModel<?> model) {
     if (mode == 0) {
-      while (scan.hasNext()) {
+      while (scan.hasNext() && !gameOver) {
         String input = scan.next();
         if (input.equalsIgnoreCase("q")) {
           try {
@@ -142,37 +187,47 @@ public class SoloRedTextController implements RedGameController {
     return Collections.emptyList();
   }
 
-
-
+  /**
+   * Checks if the game is over, transmitting the win/loss to the output.
+   *
+   * @param model the game model to check
+   * @return true if the game continues, false if it's over
+   * @throws IOException if transmitting the game state fails
+   */
   private boolean checkGameStatus(RedGameModel<?> model) throws IOException {
     if (model.isGameOver()) {
-      if (model.isGameWon()) {
-        transmit("Game won.");
-        transmit(this.view.toString());
-        transmit("Number of cards in deck: " + model.numOfCardsInDeck());
-        return false;
-      } else {
-        transmit("Game lost.");
-        transmit(this.view.toString());
-        transmit("Number of cards in deck: " + model.numOfCardsInDeck());
-        return false;
-      }
+      String resultMessage = model.isGameWon() ? "Game won." : "Game lost.";
+      transmit(resultMessage);
+      this.view.render();
+      transmit("\nNumber of cards in deck: " + model.numOfCardsInDeck());
+      return false;
     }
     return true;
   }
 
+  /**
+   * Quits the game, showing the current game state and ending the session.
+   *
+   * @param model the game model being used
+   * @throws IOException if transmitting the game state fails
+   */
   private void gameQuit(RedGameModel<?> model) throws IOException {
     transmit("Game quit!");
     transmit("State of game when quit:");
-    transmit(this.view.toString());
-    transmit("Number of cards in deck: " + model.numOfCardsInDeck());
+    this.view.render();
+    transmit("\nNumber of cards in deck: " + model.numOfCardsInDeck());
     this.gameOver = true;
   }
 
+  /**
+   * Updates the canvas with the user's move.
+   *
+   * @param userInput the canvas index to update
+   * @param model the game model being used
+   */
   private void updateCanvas(Integer userInput, RedGameModel<?> model) {
     try {
       model.playToCanvas(userInput);
-      model.drawForHand();
     } catch (IllegalArgumentException | NoSuchElementException | IndexOutOfBoundsException e) {
       transmit("Invalid move. Try again. Invalid canvas index.");
     } catch (IllegalStateException e) {
@@ -180,17 +235,28 @@ public class SoloRedTextController implements RedGameController {
     }
   }
 
-  private void updatePallete(Integer palleteIdx, Integer handIdx, RedGameModel<?> model) {
+  /**
+   * Updates the palette with the user's move.
+   *
+   * @param paletteIdx the palette index to update
+   * @param handIdx the hand index to play from
+   * @param model the game model being used
+   */
+  private void updatePallete(Integer paletteIdx, Integer handIdx, RedGameModel<?> model) {
     try {
-      model.playToPalette(palleteIdx, handIdx);
-      model.drawForHand();
-    } catch (IllegalArgumentException | NoSuchElementException  e) {
+      model.playToPalette(paletteIdx, handIdx);
+    } catch (IllegalArgumentException | NoSuchElementException e) {
       transmit("Invalid move. Try again. Invalid palette index.");
     } catch (IllegalStateException | IndexOutOfBoundsException e) {
       transmit("Invalid move. Try again. Palette is currently winning.");
     }
   }
 
+  /**
+   * Sends a message to the output.
+   *
+   * @param message the message to display
+   */
   @Override
   public void transmit(String message) {
     try {
@@ -199,6 +265,4 @@ public class SoloRedTextController implements RedGameController {
       throw new IllegalStateException("Failed to transmit message", e);
     }
   }
-
-
 }
