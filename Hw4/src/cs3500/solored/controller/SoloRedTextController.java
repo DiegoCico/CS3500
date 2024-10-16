@@ -69,7 +69,7 @@ public class SoloRedTextController implements RedGameController {
       transmit("\nNumber of cards in deck: " + model.numOfCardsInDeck());
 
       while (!model.isGameOver() && scan.hasNext()) {
-        String userInput = scan.next();
+        String userInput = scan.next()  ;
 
         if (!userInput.equalsIgnoreCase("canvas") && paletteWork) {
           model.drawForHand();

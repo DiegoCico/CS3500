@@ -52,7 +52,6 @@ public class SoloRedTextController implements RedGameController {
   public <C extends Card> void playGame(RedGameModel<C> model,
                                         List<C> deck, boolean shuffle,
                                         int numPalettes, int handSize) {
-    // Validate input parameters
     if (model == null || deck == null) {
       throw new IllegalArgumentException("Model or deck cannot be null.");
     }
@@ -115,8 +114,12 @@ public class SoloRedTextController implements RedGameController {
         transmit("\nNumber of cards in deck: " + model.numOfCardsInDeck());
       }
 
+      throw new IllegalStateException("Game ended with no ending");
+
     } catch (IOException e) {
       throw new IllegalStateException("Error transmitting output.", e);
+    } catch (IllegalStateException | IllegalArgumentException e) {
+      throw new IllegalStateException("Error from starGame.", e);
     }
   }
 
@@ -129,63 +132,39 @@ public class SoloRedTextController implements RedGameController {
    * @param model the game model being used
    * @return a list of valid numbers based on the user input
    */
-  private List<Integer> validNumber(int mode, RedGameModel<?> model) {
-    if (mode == 0) {
-      while (scan.hasNext() && !gameOver) {
-        String input = scan.next();
-        if (input.equalsIgnoreCase("q")) {
-          try {
-            gameQuit(model);
-            return List.of();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
+  private List<Integer> validNumber(int mode, RedGameModel<?> model) throws IOException {
+    List<Integer> numbers = new ArrayList<>();
 
-        try {
-          int num = Integer.parseInt(input);
+    while (scan.hasNext() && !gameOver) {
+      String input = scan.next();
 
-          if (num > 0) {
+      if (input.equalsIgnoreCase("q")) {
+        gameQuit(model);
+        return List.of();
+      }
+
+      try {
+        int num = Integer.parseInt(input);
+
+        if (num > 0) {
+          numbers.add(num);
+
+          if (mode == 0) {
             return List.of(num);
           }
-        } catch (NumberFormatException ignored) {
 
-        }
-      }
-    } else {
-      List<Integer> lastTwoInts = new ArrayList<>();
-
-      while (scan.hasNext()) {
-        String input = scan.next();
-
-        if (input.equalsIgnoreCase("q")) {
-          try {
-            gameQuit(model);
-            return List.of();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
+          if (mode != 0 && numbers.size() == 2) {
+            return numbers;
           }
         }
+      } catch (NumberFormatException ignored) {
 
-        try {
-          int num = Integer.parseInt(input);
-
-          if (num > 0) {
-            lastTwoInts.add(num);
-
-            if (lastTwoInts.size() == 2) {
-              return lastTwoInts;
-            }
-          }
-        } catch (NumberFormatException ignored) {
-
-        }
       }
-
     }
 
     return Collections.emptyList();
   }
+
 
   /**
    * Checks if the game is over, transmitting the win/loss to the output.

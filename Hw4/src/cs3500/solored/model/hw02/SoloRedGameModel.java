@@ -136,13 +136,9 @@ public class SoloRedGameModel implements RedGameModel<CardModel> {
    * are added to the end of the hand (far-right conventionally).
    * SIDE-EFFECT: Allows the player to play to the canvas again.
    *
-   * @throws IllegalStateException if the game has not started or the game is over
    */
   @Override
   public void drawForHand() {
-    if (!gameStarted || isGameOver()) {
-      throw new IllegalStateException("Game has not started or the game is over.");
-    }
 
     while (hand.size() < handsize && !deck.isEmpty()) {
       hand.add(deck.remove(0));
