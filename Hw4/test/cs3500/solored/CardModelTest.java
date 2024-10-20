@@ -120,20 +120,16 @@ public class CardModelTest {
   /**
    * Tests edge case: card with an empty color.
    */
-  @Test
+  @Test (expected = IllegalArgumentException.class)
   public void testCardWithEmptyColor() {
     CardModel card = new CardModel("", 3);
-    Assert.assertEquals("Empty color expected.", "", card.getColor());
-    Assert.assertEquals("Wrong number.", 3, card.getNumber());
   }
 
   /**
    * Tests edge case: card with a negative number.
    */
-  @Test
+  @Test (expected = IllegalArgumentException.class)
   public void testCardWithNegativeNumber() {
     CardModel card = new CardModel("G", -5);
-    Assert.assertEquals("Wrong color.", "G", card.getColor());
-    Assert.assertEquals("Negative number expected.", -5, card.getNumber());
   }
 }

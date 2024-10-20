@@ -1,10 +1,13 @@
-package cs3500.solored.model.hw02;
+package cs3500.solored;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+
+import cs3500.solored.model.hw02.CardModel;
+import cs3500.solored.model.hw02.WinningPallet;
 
 import static org.junit.Assert.assertEquals;
 
