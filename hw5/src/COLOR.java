@@ -1,2 +1,6 @@
-package PACKAGE_NAME;public enum COLOR {
+/**
+ * Class ENUM to represent each player.
+ */
+public enum COLOR {
+  RED, BLUE
 }
