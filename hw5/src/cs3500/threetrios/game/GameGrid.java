@@ -1,21 +1,23 @@
-package cs3500.threetrios;
+package cs3500.threetrios.game;
+
+import cs3500.threetrios.card.Card;
 
 /**
- * This class represents a cs3500.threetrios.GameGrid.
+ * This class represents a GameGrid.
  */
-public class GameGrid implements Grid{
+public class GameGrid implements Grid {
   private final Cell[][] cells;
   private final int rows;
   private final int cols;
 
   /**
-   * cs3500.threetrios.GameGrid constructor.
+   * GameGrid constructor.
    * @param row grid rows
    * @param col grid col
    * @param cells grid
    */
   public GameGrid(int row, int col, Cell[][] cells) {
-    /* INVARIANT: cs3500.threetrios.Grid rows and cells must be non-zero and positive. */
+    /* INVARIANT: Grid rows and cells must be non-zero and positive. */
     if (row <= 0 || col <= 0) {
       throw new IllegalStateException("Invalid row or column");
     }
@@ -29,8 +31,12 @@ public class GameGrid implements Grid{
     initializeGrid();
   }
 
+  /**
+   * Another constructor that takes in a grid object.
+   * @param grid game grid
+   */
   public GameGrid(Grid grid) {
-    // INVARIANT: cs3500.threetrios.Grid cannot be null
+    // INVARIANT:Grid cannot be null
     if (grid == null) {
       throw new IllegalArgumentException("grid cannot be null");
     }
@@ -40,12 +46,12 @@ public class GameGrid implements Grid{
   }
 
   /**
-   * cs3500.threetrios.GameGrid constructor.
+   * GameGrid constructor.
    * @param row grid rows
    * @param col grid col
    */
   public GameGrid(int row, int col) {
-    // INVARIANT: cs3500.threetrios.Grid rows and cells must be non-zero and positive
+    // INVARIANT: Grid rows and cells must be non-zero and positive
     if (row < 0 || col < 0) {
       throw new IllegalStateException("Invalid row or column");
     }
@@ -59,17 +65,14 @@ public class GameGrid implements Grid{
    * Initializes a grid.
    */
   public void initializeGrid() {
-    /* INVARIANT: All cells must be filled as holes or with cards */
-    for(int row = 0; row < rows; row++) {
-      for(int col = 0; col < cols; col++) {
-        if((row == 1 && col == 1 || row == 2 && col == 2)) {
-          cells[row][col] = new Cell(Cell.CellType.HOLE);
-        } else {
-          cells[row][col] = new Cell(Cell.CellType.CARD_CELL);
-        }
+    /* INVARIANT: All cells are initialized as CARD_CELL by default */
+    for (int row = 0; row < rows; row++) {
+      for (int col = 0; col < cols; col++) {
+        cells[row][col] = new Cell(Cell.CellType.CARD_CELL);
       }
     }
   }
+
   /**
    * Gets the grid columns.
    * @return cols
@@ -84,16 +87,16 @@ public class GameGrid implements Grid{
    * @param row grid row
    * @param col grid column
    * @param card the card
-   * @return
    */
   @Override
-  public boolean placeCard(int row, int col, Card card) {
-    if(validPosition(row, col) && cells[row][col].isCardCell() &&
-            cells[row][col].isEmpty()){
+  public void placeCard(int row, int col, Card card) {
+    if (validPosition(row, col) && cells[row][col].isCardCell() &&
+            cells[row][col].isEmpty()) {
       cells[row][col].placeCard(card);
-      return true;
+      System.out.println(cells[row][col].toString());
+    } else {
+      throw new IllegalStateException("Invalid position");
     }
-    return false;
   }
 
   /**
@@ -119,12 +122,12 @@ public class GameGrid implements Grid{
 
 
   /**
-   * gets the area of the gird
+   * gets the area of the grid.
    * @return area of grid
    */
   @Override
   public int getNumCardsCells() {
-    return rows*cols;
+    return rows * cols;
   }
 
 
@@ -180,24 +183,26 @@ public class GameGrid implements Grid{
     Cell[][] copy = new Cell[rows][cols];
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
-        copy[i][j] = cells[i][j];
+        Cell original = cells[i][j];
+        copy[i][j] = original.isEmpty() ? new Cell(original.getType())
+                : new Cell(original.getCard(), original.getType());
       }
     }
     return copy;
   }
 
+  /**
+   * This will make a cell - CARD_CELL or HOLE.
+   * @param row specific row
+   * @param col specific column
+   * @param type the cell type ENUM
+   */
   @Override
-  public void addCardCell(int row, int col) {
+  public void setCellType(int row, int col, Cell.CellType type) {
     if (validPosition(row, col)) {
-      cells[row][col] = new Cell(Cell.CellType.CARD_CELL);
+      cells[row][col] = new Cell(type);
     }
   }
 
-  @Override
-  public void addHole(int row, int col) {
-    if (validPosition(row, col)) {
-      cells[row][col] = new Cell(Cell.CellType.HOLE);
-    }
-  }
 
 }

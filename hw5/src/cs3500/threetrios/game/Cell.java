@@ -1,12 +1,14 @@
-package cs3500.threetrios;
+package cs3500.threetrios.game;
+
+import cs3500.threetrios.card.Card;
 
 /**
- * A class to represent a cs3500.threetrios.Cell on a board.
+ * A class to represent a Cell on a board.
  */
 public class Cell {
 
   /**
-   * ENUM class for define cell status
+   * ENUM class for define cell status.
    */
   public enum CellType {
     CARD_CELL,
@@ -17,12 +19,12 @@ public class Cell {
   private final CellType type;
 
   /**
-   * Constructor for cs3500.threetrios.Cell.
+   * Constructor for Cell.
    * @param type the type of cell
    */
-  public Cell(CellType type){
-    if (type == null){
-      throw new IllegalStateException("cs3500.threetrios.Card and cell type cannot be null");
+  public Cell(CellType type) {
+    if (type == null) {
+      throw new IllegalStateException("Card and cell type cannot be null");
     }
     this.type = type;
     this.card = null;
@@ -30,13 +32,13 @@ public class Cell {
 
 
   /**
-   * Constructor for cs3500.threetrios.Cell.
+   * Constructor for Cell.
    * @param card ca card
    * @param type type of card
    */
-  public Cell(Card card, CellType type){
-    if (card == null || type == null){
-      throw new IllegalStateException("cs3500.threetrios.Card and cell type cannot be null");
+  public Cell(Card card, CellType type) {
+    if (card == null || type == null) {
+      throw new IllegalStateException("Card and cell type cannot be null");
     }
     this.card = card;
     this.type = type;
@@ -54,23 +56,21 @@ public class Cell {
   /**
    * Method to place a card in the cell only if it is
    * a CARD_CELL.
-   * @param card
+   * @param card using.
    */
   public void placeCard(Card card) {
     if (card == null) {
-      throw new IllegalArgumentException("cs3500.threetrios.Card cannot be null");
+      throw new IllegalArgumentException("Card cannot be null");
     }
-    if(!isEmpty()) {
-      throw new IllegalStateException("This cell is already empty");
+    if (!isEmpty()) {
+      throw new IllegalStateException("This cell already contains a card");
     }
     if (isCardCell()) {
-      System.out.println("Placing card in cell of type CARD_CELL");
       this.card = card;
     } else {
       throw new IllegalStateException("Cannot place a card in a non-card cell");
     }
   }
-
 
   /**
    * Gets the card in the cell.
@@ -96,5 +96,11 @@ public class Cell {
     return this.type;
   }
 
-
+  /**
+   * to string method.
+   * @return string.
+   */
+  public String toString() {
+    return this.card.toString();
+  }
 }

@@ -14,7 +14,7 @@ public class GameController {
    */
   public GameController(Game game) {
     if (game == null) {
-      throw new IllegalArgumentException("Game cannot be null");
+      throw new IllegalArgumentException("cs3500.threetrios.Game.Game cannot be null");
     }
     this.game = game;
     this.isGameOver = false;

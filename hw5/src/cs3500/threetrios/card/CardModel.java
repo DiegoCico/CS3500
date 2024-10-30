@@ -1,4 +1,4 @@
-package cs3500.threetrios;
+package cs3500.threetrios.card;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ public class CardModel implements Card {
   private COLOR color;
 
   /**
-   * Creates a {@code cs3500.threetrios.CardModel} with specified numbers and color.
+   * Creates a {CardModel} with specified numbers and color.
    *
    * @param north the north side number (1-9 or A)
    * @param south the south side number (1-9 or A)
@@ -38,6 +38,7 @@ public class CardModel implements Card {
   }
 
   /**
+   * getting north.
    * @return the number on the north side
    */
   public int getNorth() {
@@ -45,6 +46,7 @@ public class CardModel implements Card {
   }
 
   /**
+   * getting south.
    * @return the number on the south side
    */
   public int getSouth() {
@@ -52,6 +54,7 @@ public class CardModel implements Card {
   }
 
   /**
+   * getting east.
    * @return the number on the east side
    */
   public int getEast() {
@@ -59,6 +62,7 @@ public class CardModel implements Card {
   }
 
   /**
+   * getting west.
    * @return the number on the west side
    */
   public int getWest() {
@@ -66,6 +70,7 @@ public class CardModel implements Card {
   }
 
   /**
+   * getting color.
    * @return the card's color
    */
   public COLOR getColor() {
@@ -83,26 +88,31 @@ public class CardModel implements Card {
   }
 
   /**
-   * Checks if two {@code cs3500.threetrios.CardModel} objects are equal.
+   * Checks if two {CardModel} objects are equal.
    *
    * @param obj the object to compare
    * @return {@code true} if the cards are equal, {@code false} otherwise
    */
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null || getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
 
     CardModel other = (CardModel) obj;
-    return north == other.north &&
-            south == other.south &&
-            east == other.east &&
-            west == other.west &&
-            color == other.color;
+    return north == other.north
+            && south == other.south
+            && east == other.east
+            && west == other.west
+            && color == other.color;
   }
 
   /**
-   * @return the hash code of the card
+   * hashcode for cardmodel.
+   * @return the hash code of the card.
    */
   @Override
   public int hashCode() {
@@ -110,7 +120,8 @@ public class CardModel implements Card {
   }
 
   /**
-   * @return a string representation of the card
+   * to string for card.
+   * @return a string representation of the card.
    */
   public String toString() {
     return name + ": " + north.getValue() + " "
@@ -118,5 +129,13 @@ public class CardModel implements Card {
             + east.getValue() + " "
             + west.getValue() + " "
             + color;
+  }
+
+  /**
+   *  name of the  card.
+   * @return name of the card.
+   */
+  public String getName() {
+    return name;
   }
 }

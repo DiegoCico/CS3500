@@ -1,12 +1,19 @@
-package cs3500.threetrios;
+package cs3500.threetrios.game;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import cs3500.threetrios.card.COLOR;
+import cs3500.threetrios.card.Card;
+import cs3500.threetrios.card.CardModel;
+import cs3500.threetrios.parser.BoardConfigParser;
+import cs3500.threetrios.player.Player;
+import cs3500.threetrios.player.PlayerModel;
+
 /**
- * A cs3500.threetrios.GameModel class that implements the cs3500.threetrios.Game interface.
+ * A GameModel class that implements the Game interface.
  */
 public class GameModel implements Game {
 
@@ -16,7 +23,7 @@ public class GameModel implements Game {
   private Random rand = new Random();
 
   /**
-   * Constructor for a cs3500.threetrios.GameModel.
+   * Constructor for a GameModel.
    * @param grid game grid and players
    */
   public GameModel(Grid grid, Player[] players) {
@@ -30,23 +37,22 @@ public class GameModel implements Game {
   }
 
   /**
-   * Constructor for GameModel, initializing grid and cards based on a single config file.
+   * Constructor for GameModel, initializing grid and cards
+   * based on a single config file.
    *
-   * @param boardConfigPath path to the combined board configuration file
-   * @throws FileNotFoundException if the configuration file is not found
+   * @throws FileNotFoundException if the configuration file is not found.
    */
-  public GameModel(String boardConfigPath) throws FileNotFoundException {
-    if (boardConfigPath == null || boardConfigPath.isEmpty()) {
-      throw new IllegalArgumentException("Board config path cannot be null");
-    }
-    GameModel parsedGame = BoardConfigParser.parseBoardConfig(boardConfigPath);
+  public GameModel() throws FileNotFoundException {
+    GameModel parsedGame = BoardConfigParser.parseBoardConfig();
     this.grid = parsedGame.getGrid();
     this.players = parsedGame.getPlayers();
     this.turn = 0;
+
   }
 
   /**
-   * Constructor for GameModel, initializing players with distributed cards from a provided deck.
+   * Constructor for GameModel, initializing players with
+   * distributed cards from a provided deck.
    *
    * @param grid the game grid
    * @param deck the deck of cards parsed from configuration
@@ -59,30 +65,29 @@ public class GameModel implements Game {
     this.grid = grid;
     this.turn = 0;
 
-    // Distribute cards to players
     int numCardsEachPlayer = (grid.getNumCardsCells() + 1) / 2;
     List<Card> redPlayerCards = drawCards(deck, numCardsEachPlayer, COLOR.RED);
     List<Card> bluePlayerCards = drawCards(deck, numCardsEachPlayer, COLOR.BLUE);
 
-    this.players = new Player[]{
-            new PlayerModel("Player Red", COLOR.RED, redPlayerCards),
-            new PlayerModel("Player Blue", COLOR.BLUE, bluePlayerCards)
+    this.players = new Player[] {
+        new PlayerModel("Player Red", COLOR.RED, redPlayerCards),
+        new PlayerModel("Player Blue", COLOR.BLUE, bluePlayerCards)
     };
   }
 
   /**
-   * Constructor for a cs3500.threetrios.GameModel.
+   * Constructor for a GameModel.
    * @param grid game grid
    */
   public GameModel(Grid grid) {
     if (grid == null) {
-      throw new IllegalArgumentException("cs3500.threetrios.Grid and Players cannot be null");
+      throw new IllegalArgumentException("Grid and Players cannot be null");
     }
 
     this.grid = grid;
     this.players = new Player[] {
-            new PlayerModel("Player Red", COLOR.RED, getCards()),
-            new PlayerModel("Player Blue", COLOR.BLUE, getCards())
+        new PlayerModel("Player Red", COLOR.RED, getCards()),
+        new PlayerModel("Player Blue", COLOR.BLUE, getCards())
     };
     this.turn = 0;
   }
@@ -131,18 +136,18 @@ public class GameModel implements Game {
       throw new IllegalStateException("It is not the current player's turn.");
     }
 
-    if (grid.isEmpty(row, col)) {
+    if (grid.validPosition(row, col)) {
       currentPlayer.removeCard(currentPlayer.getHand().indexOf(card));
-      battleCards(row, col);
-      switchTurns();
+      grid.placeCard(row, col, card);
     } else {
-      throw new IllegalStateException("Cannot place a card in an occupied or invalid cell.");
+      throw new IllegalStateException("Cannot place a card in" +
+              " an occupied or invalid cell.");
     }
   }
 
   /**
    * Gets all the cards in the game.
-   * @return a List<cs3500.threetrios.Card> a hand
+   * @return a List of cards a hand
    */
   @Override
   public List<Card> getCards() {
@@ -218,10 +223,10 @@ public class GameModel implements Game {
    */
   @Override
   public void battleCards(int row, int col) {
-    Card placedCard = grid.getCard(row,col);
+    Card placedCard = grid.getCard(row, col);
     boolean flipped = true;
 
-    while(flipped) {
+    while (flipped) {
       flipped = false;
       int[][] directions = {
               {-1, 0},
@@ -243,8 +248,8 @@ public class GameModel implements Game {
 
             if (placedCardAttack > adjacentCardAttack) {
               adjacentCard.switchColor(placedCard.getColor());
-              grid.placeCard(newRow, newCol, adjacentCard);
               flipped = true;
+              battleCards(newRow, newCol);
             }
           }
         }
@@ -253,7 +258,8 @@ public class GameModel implements Game {
   }
 
   /**
-   * Gets a certain attack value associated with a cs3500.threetrios.Card and direction (ENUM)
+   * Gets a certain attack value associated with a
+   * Card and direction (ENUM).
    * @param card a game card
    * @param direction a direction
    * @return the value
@@ -268,7 +274,8 @@ public class GameModel implements Game {
         return card.getEast();
       case 3:
         return card.getWest();
-      default: throw new IllegalArgumentException("Invalid direction");
+      default:
+        throw new IllegalArgumentException("Invalid direction");
     }
   }
 
@@ -276,7 +283,65 @@ public class GameModel implements Game {
    * Gets the current players array.
    * @return the players array
    */
+  @Override
   public Player[] getPlayers() {
     return players;
+  }
+
+  /**
+   * Gets the current player turn.
+   * @return the player turn.
+   */
+  @Override
+  public int getTurn() {
+    return this.turn;
+  }
+
+  /**
+   * Checks if the game has ended by counting the number
+   * of cards owned by each player.
+   * @return "Red Wins", "Blue Wins", or "Tie" based on card ownership
+   */
+  @Override
+  public String checkWinCondition() {
+    int redCount = 0;
+    int blueCount = 0;
+
+    for (int row = 0; row < grid.getRows(); row++) {
+      for (int col = 0; col < grid.getCols(); col++) {
+        Card card = grid.getCard(row, col);
+        if (card != null) {
+          if (card.getColor() == COLOR.RED) {
+            redCount++;
+          } else if (card.getColor() == COLOR.BLUE) {
+            blueCount++;
+          }
+        }
+      }
+    }
+
+    if (redCount > blueCount) {
+      return "Red Wins";
+    } else if (blueCount > redCount) {
+      return "Blue Wins";
+    } else {
+      return "Tie";
+    }
+  }
+
+  /**
+   * Checks if the game is over by verifying that all card cells are filled.
+   * @return true if all card cells are filled, false otherwise
+   */
+  public boolean isGameOver() {
+    for (int row = 0; row < grid.getRows(); row++) {
+      for (int col = 0; col < grid.getCols(); col++) {
+        if (grid.getCard(row, col) == null && grid.getCellType(row, col)
+                == Cell.CellType.CARD_CELL) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }

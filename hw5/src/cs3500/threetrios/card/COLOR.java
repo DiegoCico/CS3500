@@ -1,4 +1,4 @@
-package cs3500.threetrios;
+package cs3500.threetrios.card;
 
 /**
  * Class ENUM to represent each player.

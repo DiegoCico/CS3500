@@ -1,13 +1,15 @@
+package cs3500.threetrios;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cs3500.threetrios.COLOR;
-import cs3500.threetrios.Card;
-import cs3500.threetrios.CardModel;
-import cs3500.threetrios.PlayerModel;
+import cs3500.threetrios.card.COLOR;
+import cs3500.threetrios.card.Card;
+import cs3500.threetrios.card.CardModel;
+import cs3500.threetrios.player.PlayerModel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,7 +17,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
- * PlayerModelTest meant for testing purposes.
+ * cs3500.threetrios.PlayerModelTest meant for testing purposes.
  */
 public class PlayerModelTest {
 
@@ -46,7 +48,8 @@ public class PlayerModelTest {
 
   @Test
   public void testConstructorWithEmptyHand() {
-    assertThrows(IllegalStateException.class, () -> new PlayerModel("Player1", COLOR.RED, new ArrayList<>()));
+    assertThrows(IllegalStateException.class,
+        () -> new PlayerModel("Player1", COLOR.RED, new ArrayList<>()));
   }
 
   @Test
@@ -133,13 +136,13 @@ public class PlayerModelTest {
     player.removeCard(0);
     assertEquals(initialSize - 1, player.handSize());
   }
+
   @Test
   public void testGetHandReturnsImmutableList() {
     List<Card> handCopy = player.getHand();
     handCopy.add(new CardModel("Ten", 5, 5, 5, 5, COLOR.RED));
     assertEquals(2, player.handSize());
   }
-
 
   @Test
   public void testMultipleAddAndRemoveOperations() {

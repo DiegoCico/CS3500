@@ -1,6 +1,9 @@
-package cs3500.threetrios;
+package cs3500.threetrios.player;
 
 import java.util.List;
+
+import cs3500.threetrios.card.COLOR;
+import cs3500.threetrios.card.Card;
 
 /**
  * Represents a player in the game with methods to manage their hand of cards.
@@ -50,5 +53,9 @@ public interface Player {
    */
   Card getCard(int index);
 
+  /**
+   * getting the color.
+   * @return color.
+   */
   COLOR getColor();
 }

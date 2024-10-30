@@ -1,6 +1,9 @@
-package cs3500.threetrios;
+package cs3500.threetrios.game;
 
 import java.util.List;
+
+import cs3500.threetrios.card.Card;
+import cs3500.threetrios.player.Player;
 
 /**
  * Represents a game with card operations.
@@ -47,4 +50,29 @@ public interface Game {
    * @return grid.
    */
   Grid getGrid();
+
+  /**
+   * Gets the current player turn.
+   * @return the player turn.
+   */
+  int getTurn();
+
+  /**
+   * Gets the current players array.
+   * @return the players array
+   */
+  Player[] getPlayers();
+
+  /**
+   * Checks if the game has ended by counting the number
+   * of cards owned by each player.
+   * @return "Red Wins", "Blue Wins", or "Tie" based  card ownership.
+   */
+  String checkWinCondition();
+
+  /**
+   * Checks if the game is over by verifying that all card cells are filled.
+   * @return true if all card cells are filled, false otherwise
+   */
+  boolean isGameOver();
 }

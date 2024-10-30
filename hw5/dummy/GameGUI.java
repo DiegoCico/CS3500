@@ -16,7 +16,7 @@ public class GameGUI {
   }
 
   private void initializeFrame() {
-    frame = new JFrame("Three Trios Game");
+    frame = new JFrame("Three Trios cs3500.threetrios.Game.Game");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(400,400);
     frame.setLayout(new BorderLayout());

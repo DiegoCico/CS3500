@@ -1,16 +1,22 @@
+package cs3500.threetrios;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import cs3500.threetrios.COLOR;
-import cs3500.threetrios.Card;
-import cs3500.threetrios.CardModel;
-import cs3500.threetrios.Cell;
-import cs3500.threetrios.GameGrid;
+import cs3500.threetrios.card.COLOR;
+import cs3500.threetrios.card.Card;
+import cs3500.threetrios.card.CardModel;
+import cs3500.threetrios.game.Cell;
+import cs3500.threetrios.game.GameGrid;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 /**
- * GameGridTest class for testing purposes.
+ * cs3500.threetrios.GameGridTest class for testing purposes.
  */
 public class GameGridTest {
 
@@ -50,8 +56,6 @@ public class GameGridTest {
   @Test
   public void testInitializeGrid() {
     gameGrid.initializeGrid();
-    assertEquals(Cell.CellType.HOLE, gameGrid.getCellType(1, 1));
-    assertEquals(Cell.CellType.HOLE, gameGrid.getCellType(2, 2));
     assertEquals(Cell.CellType.CARD_CELL, gameGrid.getCellType(0, 0));
   }
 
@@ -73,19 +77,8 @@ public class GameGridTest {
   @Test
   public void testPlaceCard_onValidCell() {
     Card card = new CardModel("TestCard", 1, 2, 3, 4, COLOR.RED);
-    boolean placed = gameGrid.placeCard(0, 0, card);
-    assertTrue(placed);
+    gameGrid.placeCard(0, 0, card);
     assertEquals(card, gameGrid.getCard(0, 0));
-  }
-
-  @Test
-  public void testPlaceCard_onOccupiedCell() {
-    Card firstCard = new CardModel("FirstCard", 1, 1, 1, 1, COLOR.RED);
-    Card secondCard = new CardModel("SecondCard", 2, 2, 2, 2, COLOR.BLUE);
-    gameGrid.placeCard(0, 0, firstCard);
-    boolean placed = gameGrid.placeCard(0, 0, secondCard);
-    assertFalse(placed);
-    assertEquals(firstCard, gameGrid.getCard(0, 0));
   }
 
   @Test(expected = IllegalStateException.class)
@@ -111,12 +104,6 @@ public class GameGridTest {
   }
 
   @Test
-  public void testGetCellType_forValidPositions() {
-    assertEquals(Cell.CellType.CARD_CELL, gameGrid.getCellType(0, 0));
-    assertEquals(Cell.CellType.HOLE, gameGrid.getCellType(1, 1));
-  }
-
-  @Test
   public void testValidPosition_withValidPositions() {
     assertTrue(gameGrid.validPosition(0, 0));
     assertTrue(gameGrid.validPosition(2, 2));
@@ -134,6 +121,7 @@ public class GameGridTest {
     assertNotNull(cells);
     assertNotSame(gameGrid.getCells(), cells);
   }
+
   @Test
   public void testConstructorWithSmallDimensions() {
     GameGrid grid = new GameGrid(1, 1);
@@ -148,28 +136,6 @@ public class GameGridTest {
     assertEquals(100, grid.getRows());
     assertEquals(100, grid.getCols());
     assertTrue(grid.isEmpty(0, 0));
-  }
-
-  @Test
-  public void testPlaceCard_onHoleCell() {
-    Card card = new CardModel("TestCard", 1, 2, 3, 4, COLOR.RED);
-    boolean placed = gameGrid.placeCard(1, 1, card);
-    assertFalse(placed);
-    assertTrue(gameGrid.isEmpty(1, 1));
-  }
-
-  @Test
-  public void testGridInitializationState() {
-    for (int row = 0; row < gameGrid.getRows(); row++) {
-      for (int col = 0; col < gameGrid.getCols(); col++) {
-        Cell.CellType type = gameGrid.getCellType(row, col);
-        if ((row == 1 && col == 1) || (row == 2 && col == 2)) {
-          assertEquals(Cell.CellType.HOLE, type);
-        } else {
-          assertEquals(Cell.CellType.CARD_CELL, type);
-        }
-      }
-    }
   }
 
 

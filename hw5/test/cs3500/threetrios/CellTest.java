@@ -1,15 +1,21 @@
+package cs3500.threetrios;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import cs3500.threetrios.COLOR;
-import cs3500.threetrios.Card;
-import cs3500.threetrios.CardModel;
-import cs3500.threetrios.Cell;
+import cs3500.threetrios.card.COLOR;
+import cs3500.threetrios.card.Card;
+import cs3500.threetrios.card.CardModel;
+import cs3500.threetrios.game.Cell;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 /**
- * A CellTest class for testing purposes.
+ * A cs3500.threetrios.CellTest class for testing purposes.
  */
 public class CellTest {
 
@@ -21,7 +27,8 @@ public class CellTest {
   public void setUp() {
     cardCell = new Cell(Cell.CellType.CARD_CELL);
     holeCell = new Cell(Cell.CellType.HOLE);
-    testCard = new CardModel("TestCard", 1, 2, 3, 4, COLOR.RED);
+    testCard = new CardModel("TestCard",
+            1, 2, 3, 4, COLOR.RED);
   }
 
   @Test
@@ -108,7 +115,8 @@ public class CellTest {
   @Test(expected = IllegalStateException.class)
   public void testPlaceCardOnOccupiedCell() {
     cardCell.placeCard(testCard);
-    Card anotherCard = new CardModel("TestCard", 1, 2, 3, 4, COLOR.RED);
+    Card anotherCard = new CardModel("TestCard",
+            1, 2, 3, 4, COLOR.RED);
     cardCell.placeCard(anotherCard);
   }
 
@@ -122,6 +130,7 @@ public class CellTest {
     assertNull(cardCell.getCard());
     assertTrue(cardCell.isEmpty());
   }
+
   @Test
   public void testPlaceCardDoesNotChangeCellType() {
     cardCell.placeCard(testCard);
@@ -148,6 +157,7 @@ public class CellTest {
   public void testConstructorWithNullCardAndType() {
     new Cell(null, null);
   }
+
   @Test(expected = IllegalStateException.class)
   public void testConstructorWithNullCard() {
     new Cell(null, Cell.CellType.CARD_CELL);
@@ -156,7 +166,8 @@ public class CellTest {
   @Test
   public void testIsCardCellReturnsFalseForHoleType() {
     Cell holeCell = new Cell(Cell.CellType.HOLE);
-    assertFalse("Expected hole cell to return false for isCardCell", holeCell.isCardCell());
+    assertFalse("Expected hole cell to return false for isCardCell",
+            holeCell.isCardCell());
   }
 
   @Test
@@ -172,19 +183,25 @@ public class CellTest {
     assertEquals(Cell.CellType.CARD_CELL, cell.getType());
   }
 
-  @Test
+  @Test (expected = IllegalStateException.class)
   public void testEmptyToString() {
-    Card card = new CardModel("", 1, 2, 3, 4, COLOR.RED);
-    card.toString();
+    Card card = new CardModel("", -1, -1, -1, -1, COLOR.RED);
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testMultiplePlaceCardCallsOnSameCardCell() {
     cardCell.placeCard(testCard);
     assertEquals(testCard, cardCell.getCard());
+
     Card anotherCard = new CardModel("AnotherCard", 5, 6, 7, 8, COLOR.BLUE);
-    cardCell.placeCard(anotherCard);
+
+    IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+      cardCell.placeCard(anotherCard);
+    });
+
+    assertEquals("This cell already contains a card", exception.getMessage());
   }
+
 
 
 }

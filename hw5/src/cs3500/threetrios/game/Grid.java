@@ -1,5 +1,10 @@
-package cs3500.threetrios;
+package cs3500.threetrios.game;
 
+import cs3500.threetrios.card.Card;
+
+/**
+ * interface for grid.
+ */
 public interface Grid {
 
   /**
@@ -7,9 +12,8 @@ public interface Grid {
    * @param row grid row
    * @param col grid column
    * @param card the card
-   * @return if the card could be placed or not
    */
-  boolean placeCard(int row, int col, Card card);
+  void placeCard(int row, int col, Card card);
 
   /**
    * Gets the card at a specific location.
@@ -49,7 +53,7 @@ public interface Grid {
 
 
   /**
-   * checks if it is a valid position in the grid
+   * checks if it is a valid position in the grid.
    * @param row row of grid.
    * @param col col of grid.
    * @return if the coordinates is a valid position.
@@ -57,13 +61,18 @@ public interface Grid {
   boolean validPosition(int row, int col);
 
   /**
-   * gets the area of the gird
+   * gets the area of the grid.
    * @return area of grid
    */
   int getNumCardsCells();
 
   Cell[][] getCells();
 
-  void addCardCell(int row, int col);
-  void addHole(int row, int col);
+  /**
+   * Adds a card cell or hole to game grid.
+   * @param row a row
+   * @param col a col
+   */
+  void setCellType(int row, int col, Cell.CellType type);
+
 }
