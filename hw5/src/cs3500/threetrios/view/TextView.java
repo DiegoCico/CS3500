@@ -1,3 +1,6 @@
+import cs3500.threetrios.Game.Cell;
+import cs3500.threetrios.Game.Grid;
+
 public class TextView {
   private final Grid grid;
   public TextView(Grid grid) {

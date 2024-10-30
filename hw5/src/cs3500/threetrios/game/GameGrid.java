@@ -1,5 +1,7 @@
+package cs3500.threetrios;
+
 /**
- * This class represents a GameGrid.
+ * This class represents a cs3500.threetrios.GameGrid.
  */
 public class GameGrid implements Grid{
   private final Cell[][] cells;
@@ -7,14 +9,14 @@ public class GameGrid implements Grid{
   private final int cols;
 
   /**
-   * GameGrid constructor.
+   * cs3500.threetrios.GameGrid constructor.
    * @param row grid rows
    * @param col grid col
    * @param cells grid
    */
   public GameGrid(int row, int col, Cell[][] cells) {
-    /* INVARIANT: Grid rows and cells must be non-zero and positive. */
-    if (row < 0 || col < 0) {
+    /* INVARIANT: cs3500.threetrios.Grid rows and cells must be non-zero and positive. */
+    if (row <= 0 || col <= 0) {
       throw new IllegalStateException("Invalid row or column");
     }
     if (cells == null) {
@@ -28,7 +30,7 @@ public class GameGrid implements Grid{
   }
 
   public GameGrid(Grid grid) {
-    // INVARIANT: Grid cannot be null
+    // INVARIANT: cs3500.threetrios.Grid cannot be null
     if (grid == null) {
       throw new IllegalArgumentException("grid cannot be null");
     }
@@ -38,12 +40,12 @@ public class GameGrid implements Grid{
   }
 
   /**
-   * GameGrid constructor.
+   * cs3500.threetrios.GameGrid constructor.
    * @param row grid rows
    * @param col grid col
    */
   public GameGrid(int row, int col) {
-    // INVARIANT: Grid rows and cells must be non-zero and positive
+    // INVARIANT: cs3500.threetrios.Grid rows and cells must be non-zero and positive
     if (row < 0 || col < 0) {
       throw new IllegalStateException("Invalid row or column");
     }
@@ -112,8 +114,9 @@ public class GameGrid implements Grid{
    */
   @Override
   public boolean validPosition(int row, int col) {
-    return row >= 0 &&  row < rows && col >= 0 && col < cols;
+    return row >= 0 && row < cells.length && col >= 0 && col < cells[0].length;
   }
+
 
   /**
    * gets the area of the gird
@@ -169,8 +172,32 @@ public class GameGrid implements Grid{
     }
   }
 
+  /**
+   * Gets all the cells in the grid.
+   * @return a copy of the grid
+   */
   public Cell[][] getCells() {
-    return cells;
+    Cell[][] copy = new Cell[rows][cols];
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        copy[i][j] = cells[i][j];
+      }
+    }
+    return copy;
+  }
+
+  @Override
+  public void addCardCell(int row, int col) {
+    if (validPosition(row, col)) {
+      cells[row][col] = new Cell(Cell.CellType.CARD_CELL);
+    }
+  }
+
+  @Override
+  public void addHole(int row, int col) {
+    if (validPosition(row, col)) {
+      cells[row][col] = new Cell(Cell.CellType.HOLE);
+    }
   }
 
 }

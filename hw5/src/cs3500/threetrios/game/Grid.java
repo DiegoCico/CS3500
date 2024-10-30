@@ -1,3 +1,5 @@
+package cs3500.threetrios;
+
 public interface Grid {
 
   /**
@@ -62,4 +64,6 @@ public interface Grid {
 
   Cell[][] getCells();
 
+  void addCardCell(int row, int col);
+  void addHole(int row, int col);
 }

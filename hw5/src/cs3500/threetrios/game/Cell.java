@@ -1,5 +1,7 @@
+package cs3500.threetrios;
+
 /**
- * A class to represent a Cell on a board.
+ * A class to represent a cs3500.threetrios.Cell on a board.
  */
 public class Cell {
 
@@ -15,23 +17,26 @@ public class Cell {
   private final CellType type;
 
   /**
-   * Constructor for Cell.
+   * Constructor for cs3500.threetrios.Cell.
    * @param type the type of cell
    */
   public Cell(CellType type){
+    if (type == null){
+      throw new IllegalStateException("cs3500.threetrios.Card and cell type cannot be null");
+    }
     this.type = type;
     this.card = null;
   }
 
 
   /**
-   * Constructor for Cell.
+   * Constructor for cs3500.threetrios.Cell.
    * @param card ca card
    * @param type type of card
    */
   public Cell(Card card, CellType type){
     if (card == null || type == null){
-      throw new IllegalStateException("Card and cell type cannot be null");
+      throw new IllegalStateException("cs3500.threetrios.Card and cell type cannot be null");
     }
     this.card = card;
     this.type = type;
@@ -53,14 +58,19 @@ public class Cell {
    */
   public void placeCard(Card card) {
     if (card == null) {
-      throw new IllegalArgumentException("Card cannot be null");
+      throw new IllegalArgumentException("cs3500.threetrios.Card cannot be null");
     }
-    if(isCardCell()){
+    if(!isEmpty()) {
+      throw new IllegalStateException("This cell is already empty");
+    }
+    if (isCardCell()) {
+      System.out.println("Placing card in cell of type CARD_CELL");
       this.card = card;
     } else {
-      throw new IllegalStateException("Cannot place a card cell when it isn't a card cell");
+      throw new IllegalStateException("Cannot place a card in a non-card cell");
     }
   }
+
 
   /**
    * Gets the card in the cell.

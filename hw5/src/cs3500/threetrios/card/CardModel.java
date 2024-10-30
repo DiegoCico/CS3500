@@ -1,3 +1,5 @@
+package cs3500.threetrios;
+
 import java.util.Objects;
 
 /**
@@ -13,7 +15,7 @@ public class CardModel implements Card {
   private COLOR color;
 
   /**
-   * Creates a {@code CardModel} with specified numbers and color.
+   * Creates a {@code cs3500.threetrios.CardModel} with specified numbers and color.
    *
    * @param north the north side number (1-9 or A)
    * @param south the south side number (1-9 or A)
@@ -28,11 +30,11 @@ public class CardModel implements Card {
       this.south = NUMBER.fromValue(south);
       this.east = NUMBER.fromValue(east);
       this.west = NUMBER.fromValue(west);
+      this.color = color;
+      this.name = name;
     } catch (IllegalArgumentException e) {
       throw new IllegalStateException("Invalid number. Must be between 1-9 or A.");
     }
-    this.name = name;
-    this.color = color;
   }
 
   /**
@@ -81,7 +83,7 @@ public class CardModel implements Card {
   }
 
   /**
-   * Checks if two {@code CardModel} objects are equal.
+   * Checks if two {@code cs3500.threetrios.CardModel} objects are equal.
    *
    * @param obj the object to compare
    * @return {@code true} if the cards are equal, {@code false} otherwise

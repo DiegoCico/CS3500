@@ -1,5 +1,7 @@
+package cs3500.threetrios;
+
 /**
- * The {@code Card} interface defines the behavior for a card, including switching its color.
+ * The {@code cs3500.threetrios.Card} interface defines the behavior for a card, including switching its color.
  */
 public interface Card {
 
