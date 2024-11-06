@@ -38,7 +38,6 @@ public class AdvancedSoloRedGameModel extends SoloRedGameModel {
    * @param paletteIdx the index of the player's palette
    * @param cardIdxInHand the index of the card in the player's hand
    */
-  @Override
   public void playToPalette(int paletteIdx, int cardIdxInHand) {
     super.playToPalette(paletteIdx, cardIdxInHand);
   }
@@ -48,7 +47,6 @@ public class AdvancedSoloRedGameModel extends SoloRedGameModel {
    *
    * @param cardIdxInHand the index of the card in the player's hand
    */
-  @Override
   public void playToCanvas(int cardIdxInHand) {
     super.playToCanvas(cardIdxInHand);
   }

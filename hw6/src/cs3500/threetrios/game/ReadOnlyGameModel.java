@@ -1,10 +1,13 @@
 package cs3500.threetrios.game;
 
-public interface ReadOnlyGameView {
+import cs3500.threetrios.player.Player;
+
+public interface ReadOnlyGameModel {
   int getGridSize();
   String getCardAt(int row, int col);
   boolean isGameOver();
   String getWinner();
-  String getCurrentPlayer();
+  Player getCurrentPlayer();
   boolean isMoveLegal(int row, int col);
+  Player[] getPlayers();
 }

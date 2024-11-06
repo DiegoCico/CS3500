@@ -42,8 +42,8 @@ public class GameModel implements Game {
    *
    * @throws FileNotFoundException if the configuration file is not found.
    */
-  public GameModel() throws FileNotFoundException {
-    GameModel parsedGame = BoardConfigParser.parseBoardConfig();
+  public GameModel(String path) throws FileNotFoundException {
+    GameModel parsedGame = BoardConfigParser.parseBoardConfig(path);
     this.grid = parsedGame.getGrid();
     this.players = parsedGame.getPlayers();
     this.turn = 0;
@@ -58,7 +58,7 @@ public class GameModel implements Game {
    * @param deck the deck of cards parsed from configuration
    */
   public GameModel(Grid grid, List<Card> deck) {
-    if (grid == null || deck == null || deck.size() < grid.getNumCardsCells() + 1) {
+    if (grid == null || deck == null) {
       throw new IllegalArgumentException("Grid and sufficient cards are required.");
     }
 
@@ -68,6 +68,10 @@ public class GameModel implements Game {
     int numCardsEachPlayer = (grid.getNumCardsCells() + 1) / 2;
     List<Card> redPlayerCards = drawCards(deck, numCardsEachPlayer, COLOR.RED);
     List<Card> bluePlayerCards = drawCards(deck, numCardsEachPlayer, COLOR.BLUE);
+
+    if (redPlayerCards.size() != bluePlayerCards.size()) {
+      throw new IllegalArgumentException("Red cards are not the same size as Blue cards");
+    }
 
     this.players = new Player[] {
         new PlayerModel("Player Red", COLOR.RED, redPlayerCards),
