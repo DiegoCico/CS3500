@@ -22,13 +22,15 @@ public class PlayerOneViewImpl extends AbstractPlayerView {
 
   @Override
   protected void refreshPlayerPanel() {
-    Player player = model.getPlayers()[0];
+    System.out.println("Refreshing player panel for: " + playerColor);
+    Player player = model.getPlayers()[playerColor == COLOR.RED ? 0 : 1];
     playerPanel.removeAll();
 
     for (Card card : player.getHand()) {
+      System.out.println("Adding card: " + card);
       JPanel cardPanel = new JPanel();
       cardPanel.setPreferredSize(new java.awt.Dimension(60, 60));
-      cardPanel.setBackground(playerColor == COLOR.RED ? java.awt.Color.PINK : java.awt.Color.CYAN);
+      cardPanel.setBackground(playerColor == COLOR.RED ? Color.PINK : Color.CYAN);
       cardPanel.add(new javax.swing.JLabel(card.getColor().toString()));
       playerPanel.add(cardPanel);
     }
@@ -36,4 +38,5 @@ public class PlayerOneViewImpl extends AbstractPlayerView {
     playerPanel.revalidate();
     playerPanel.repaint();
   }
+
 }

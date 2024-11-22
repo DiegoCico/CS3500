@@ -63,6 +63,19 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
     setVisible(true);
   }
 
+  protected JPanel getRedPlayerPanel() {
+    return this.redPlayerPanel;
+  }
+
+  protected JPanel getBluePlayerPanel() {
+    return this.bluePlayerPanel;
+  }
+
+  protected GridPanel getGridPanel() {
+    return this.gridPanel;
+  }
+
+
   /**
    * Creates a panel displaying the player's hand of cards.
    *
@@ -139,7 +152,7 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
    * @param playerColor the color of the player
    * @param playerPanel the panel representing the player's hand
    */
-  private void updatePlayerPanel(COLOR playerColor, JPanel playerPanel) {
+  public void updatePlayerPanel(COLOR playerColor, JPanel playerPanel) {
     playerPanel.removeAll();
 
     JLabel playerLabel = new JLabel(playerColor == COLOR.RED ? "Red Player" : "Blue Player");

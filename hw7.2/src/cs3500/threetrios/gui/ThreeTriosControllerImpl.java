@@ -125,7 +125,7 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
       return;
     }
 
-    int[] bestMove = strategy.ChoosePositions(model);
+    int[] bestMove = strategy.choosePositions(model);
     boolean movePlayed = false;
 
     while (!movePlayed) {

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="44c5c8da-fb0d-40d2-84d7-8e5c4b605b62" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardCanReachWithHoles.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardCannotReachWithHoles.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardComplexHybrid.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardFallBackTest.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardFull.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardNoHoles.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardNotEnoughCards.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardOnlyCornersOpen.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardSufficentCards.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardTestMinMaxStrat.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/boardTieBreaker.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/strategy-transcript.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hw7.2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/Flip.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/GoForCorner.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/HybridStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/LeastFlippableStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/MinMaxStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/NoPlay.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/ai/PosnStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/card/COLOR.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/card/Card.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/card/CardModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/card/NUMBER.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/Cell.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/Game.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/GameGrid.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/GameModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/Grid.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/MockGameModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/game/ReadOnlyGameModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/BluePlayerView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/Features.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/GridPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/RedPlayerView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/ThreeTriosControllerImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/ThreeTriosGameController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/ThreeTriosGameView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/gui/ThreeTriosViewImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/parser/BoardConfigParser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/player/Player.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/player/PlayerModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cs3500/threetrios/view/TextView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/AIStrategiesTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/BoardConfigParserTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/CardModelTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/CellTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/GameGridTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/GameModelTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/MockModelTests.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/PlayerModelTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/cs3500/threetrios/TextViewTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/out/artifacts/hw5_jar/hw5.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/out/artifacts/hw5_jar/hw5.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/controller/HumanController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/controller/HumanController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/gui/AbstractPlayerView.class" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/gui/AbstractPlayerView.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/gui/PlayerOneViewImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/gui/PlayerOneViewImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/gui/PlayerTwoViewImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/out/production/hw5/cs3500/threetrios/gui/PlayerTwoViewImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/controller/HumanController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/controller/HumanController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/gui/AbstractPlayerView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/gui/AbstractPlayerView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/gui/PlayerOneViewImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/gui/PlayerOneViewImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/gui/PlayerTwoViewImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw7/src/cs3500/threetrios/gui/PlayerTwoViewImpl.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="2v3rb255" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2pAuZ6ilsBdd2h8Y3kGuVVlvxHg" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/diegocicotoste/Documents/School/CS3500/hw7.2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="44c5c8da-fb0d-40d2-84d7-8e5c4b605b62" name="Changes" comment="" />
+      <created>1732221253783</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1732221253783</updated>
+      <workItem from="1732221254777" duration="758000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

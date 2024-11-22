@@ -1,10 +1,12 @@
 package cs3500.threetrios.gui;
 
 import cs3500.threetrios.card.COLOR;
+import cs3500.threetrios.card.Card;
 import cs3500.threetrios.game.ReadOnlyGameModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 /**
  * Abstract base class for player-specific views in the Three Trios game.
@@ -47,14 +49,12 @@ public abstract class AbstractPlayerView extends JFrame implements ThreeTriosGam
     playerPanel.setBackground(playerColor == COLOR.RED ? Color.PINK : Color.CYAN);
     playerPanel.setPreferredSize(new Dimension(200, getHeight()));
 
-    // Place RED on the left (WEST) and BLUE on the right (EAST)
     if (playerColor == COLOR.RED) {
       add(playerPanel, BorderLayout.WEST);
     } else {
       add(playerPanel, BorderLayout.EAST);
     }
 
-    // Grid panel for the main game in the center
     gridPanel = new JPanel(new GridLayout(model.getGridSize(), model.getGridSize()));
     gridPanel.setPreferredSize(new Dimension(600, 600)); // Center grid
     add(gridPanel, BorderLayout.CENTER);
@@ -76,6 +76,17 @@ public abstract class AbstractPlayerView extends JFrame implements ThreeTriosGam
   @Override
   public void refresh() {
     refreshPlayerPanel();
+    gridPanel.removeAll(); // Clear the grid
+    for (int i = 0; i < model.getGridSize(); i++) {
+      for (int j = 0; j < model.getGridSize(); j++) {
+        JButton cell = new JButton(model.getCardAt(i, j) != null
+                ? model.getCardAt(i, j).toString()
+                : "");
+        cell.setEnabled(false); // Disable interaction
+        gridPanel.add(cell);
+      }
+    }
+    gridPanel.revalidate();
     gridPanel.repaint();
   }
 
@@ -92,6 +103,7 @@ public abstract class AbstractPlayerView extends JFrame implements ThreeTriosGam
     String winnerMessage = model.getWinner();
     String message = winnerMessage.equals("Tie") ? "It's a tie!" : winnerMessage + " wins!";
     JOptionPane.showMessageDialog(this, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+    System.exit(0);
   }
 
   /**

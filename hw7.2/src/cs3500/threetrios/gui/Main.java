@@ -27,22 +27,18 @@ public class Main {
     SwingUtilities.invokeLater(() -> {
       try {
         GameModel model = new GameModel(
-                "/Users/diegocicotoste/Documents/School/CS3500/hw6/docs/boardNoHoles.config");
+                "/Users/diegocicotoste/Documents/School/CS3500/hw7.2/docs/boardNoHoles.config");
 
-        ThreeTriosViewImpl view = new ThreeTriosViewImpl(model);
+        ThreeTriosGameView redView = new RedPlayerView(model);
+        ThreeTriosGameView blueView = new BluePlayerView(model);
 
-        PosnStrategy strategy1 = new Flip();
-        PosnStrategy strategy2 = new GoForCorner();
-        PosnStrategy strategy3 = new LeastFlippableStrategy();
-        PosnStrategy strategy4 = new MinMaxStrategy();
-
-        List<PosnStrategy> aI = List.of(strategy1, strategy2, strategy3, strategy4);
-        HybridStrategy aIController = new HybridStrategy(aI);
-        new ThreeTriosControllerImpl(model, view);
+        new ThreeTriosControllerImpl(model, redView);
+        new ThreeTriosControllerImpl(model, blueView);
       } catch (FileNotFoundException e) {
         System.err.println("Configuration file not found: " + e.getMessage());
       }
     });
+
   }
 }
 

@@ -45,41 +45,32 @@ public class HumanController extends AbstractController {
    */
   @Override
   public void handleCellClick(int row, int col) {
-    if (model.isGameOver()) {
-      view.displayGameOverMessage();
-      return;
-    }
-
     try {
       if (!model.isMoveLegal(row, col)) {
-        view.displayErrorMessage("Invalid move. Cell is occupied or out of bounds.");
+        view.displayErrorMessage("Invalid move.");
         return;
       }
 
       Card cardToPlace = selectedCard != null ? selectedCard : getDefaultCard();
       if (cardToPlace == null) {
-        view.displayErrorMessage("No card selected or available.");
+        view.displayErrorMessage("No card selected.");
         return;
       }
 
       model.placeCard(row, col, cardToPlace);
       model.battleCards(row, col, new HashSet<>());
       selectedCard = null;
-      view.refresh();
 
-      if (model.isGameOver()) {
-        view.displayGameOverMessage();
-      } else {
-        model.switchTurns();
-        view.displayCurrentPlayer(model.getCurrentPlayerModel().getName());
-        if (model.getCurrentPlayerModel().getColor() == COLOR.BLUE) {
-          handleAIMove();
-        }
-      }
-    } catch (IllegalStateException e) {
-      view.displayErrorMessage("Error: " + e.getMessage());
+      // Refresh view to update the display
+      view.refresh();
+      model.switchTurns();
+      view.displayCurrentPlayer(model.getCurrentPlayerModel().getName());
+    } catch (Exception e) {
+      view.displayErrorMessage("Error in handleCellClick: " + e.getMessage());
+      e.printStackTrace();
     }
   }
+
 
   /**
    * Handles card selection by validating the index and updating the selected card.
