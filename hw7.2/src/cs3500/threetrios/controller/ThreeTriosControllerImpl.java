@@ -55,6 +55,13 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
    */
   @Override
   public void handleCellClick(int row, int col) {
+    Player currentPlayer = model.getCurrentPlayerModel();
+    if ((currentPlayer.getColor() == COLOR.RED && !view.isRedPlayerView()) ||
+            (currentPlayer.getColor() == COLOR.BLUE && !view.isBluePlayerView())) {
+      view.displayErrorMessage("It is not your turn!");
+      return;
+    }
+
     System.out.println("Cell clicked: " + row + ", " + col);
     if (model.isGameOver()) {
       view.displayGameOverMessage();
@@ -62,7 +69,6 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
     }
 
     try {
-      Player currentPlayer = model.getCurrentPlayerModel();
       Card cardToPlace = selectedCard != null ? selectedCard
               : (currentPlayer.getHand().isEmpty() ? null : currentPlayer.getHand().get(0));
 
@@ -94,6 +100,7 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
       view.displayErrorMessage("Invalid move. Try again.");
     }
   }
+
 
   /**
    * Makes sure it selects a valid card index.

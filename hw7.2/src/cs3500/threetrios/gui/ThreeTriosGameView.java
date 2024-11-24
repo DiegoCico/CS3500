@@ -1,4 +1,6 @@
-package cs3500.threetrios.gui;
+package cs3500.threetrios.controller;
+
+import cs3500.threetrios.gui.Features;
 
 /**
  * Represents the view interface for the Three Trios game, responsible for displaying
@@ -37,4 +39,17 @@ public interface ThreeTriosGameView {
    * @param message a String representing the error message to display.
    */
   void displayErrorMessage(String message);
+
+  /**
+   * Checks if this view belongs to the red player.
+   * @return is it is RedView
+   */
+  boolean isRedPlayerView();
+
+  /**
+   * Checks if this view belongs to the blue player.
+   * @return is it is BlueView
+   */
+  boolean isBluePlayerView();
+
 }
