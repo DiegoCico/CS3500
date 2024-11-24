@@ -1,7 +1,7 @@
 package cs3500.threetrios.ai;
 
 
-import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 import cs3500.threetrios.player.Player;
 
 /**
@@ -12,7 +12,7 @@ public class NoPlay implements PosnStrategy {
 
 
   @Override
-  public int[] choosePositions(Game game) {
+  public int[] choosePositions(ReadOnlyGameModel game) {
     Player player = game.getCurrentPlayer();
 
     for (int row = 0; row < game.getGrid().getRows(); row++) {
@@ -38,7 +38,7 @@ public class NoPlay implements PosnStrategy {
    * @return the score based on the number of opponent cards flipped
    */
   @Override
-  public int evaluatePosition(Game game, int row, int col, int cardIndex) {
+  public int evaluatePosition(ReadOnlyGameModel game, int row, int col, int cardIndex) {
     return 0;
   }
 }

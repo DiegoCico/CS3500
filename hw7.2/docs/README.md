@@ -161,3 +161,69 @@ using the strategy design pattern
 
 ### Cards Played Both Players Hand Decreased
 ![alt text](../img/CardsPlayedBothPlayersHandDecreased.png)
+
+
+## Changes for Part 3
+
+#### IMAGES ARE IN THE COMPRESSED FOLDER UNDER docs/img.zip
+
+Independent Controllers: Each player (human or AI) has a dedicated controller,
+managing actions and turn-based restrictions.
+
+AI Strategies: AI players support multiple strategies 
+(Flip, GoForCorner, Hybrid), configurable via command-line arguments. 
+
+Event Handling: Controllers handle view actions (card selection, cell clicks)
+and model notifications (turn changes, game-end signals).
+
+Error Notifications: Invalid actions trigger pop-ups, 
+and turn-specific notifications improve gameplay clarity.
+
+Testing and Integration: Added unit and integration tests for
+model, view, and controller interactions, ensuring robust functionality.
+
+Game Initialization: startGame ensures all components are
+set up, and the first player is notified in the title of the panel.
+
+Views: There are two views one for the RED(human) player and one for the BLUE(ai or human) player to enable
+multi-player game style.
+
+Controller: Mediates interactions between the model and the view one controller for AI the other for human
+
+Turn-Based Management:
+   - Players are restricted to act only during their turn.
+   - Notifications in title are used to inform players about whose turn it is.
+   - Invalid actions during the opponent's turn are handled with error messages.
+
+Player-Action and Model-Status Interfaces
+Features Interface: Used by views to communicate user interactions like selecting cards or placing them on the grid.
+Model Listener Interface: Used by the model to notify controllers of game updates, 
+such as turn changes or game-over conditions. 
+Enable asynchronous communication between the MVC components,
+to ensure smooth gameplay.
+
+Configuring the Game via Command-Line
+The program accepts a minimum of two to four command-line arguments:
+
+Player 1 Type: "human" or "ai"
+Player 2 Type: "human" or "ai"
+Player 1 AI Strategy (Optional): "strategy1", "strategy2", or "hybrid"
+Player 2 AI Strategy (Optional): "strategy1", "strategy2", or "hybrid"
+
+More tests for GameModel:
+isMoveLegal(row, col), 
+getCurrentPlayerModel(), 
+getWinner(), 
+getGridSize(),
+getCardAt(row, col)
+
+
+## Submission Includes
+Source Code: All files for the model, view, controller, and AI strategies.
+README File: Explains the project structure, gameplay, and implementation details.
+Screenshots: Demonstrates game functionality, including:
+- Game start.
+- Player actions.
+- Game end with the winner displayed.
+Tests: Comprehensive test suite covering all components.
+JAR File: A runnable JAR file for easy game execution.

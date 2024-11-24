@@ -1,4 +1,4 @@
-package cs3500.threetrios.gui;
+package cs3500.threetrios.controller;
 
 /**
  * Represents the controller interface for the Three Trios game, responsible for handling

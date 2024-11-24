@@ -63,14 +63,29 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
     setVisible(true);
   }
 
+  /**
+   * Gets the red player panel.
+   *
+   * @return the red player panel
+   */
   protected JPanel getRedPlayerPanel() {
     return this.redPlayerPanel;
   }
 
+  /**
+   * Gets the blue player panel.
+   *
+   * @return the blue player panel
+   */
   protected JPanel getBluePlayerPanel() {
     return this.bluePlayerPanel;
   }
 
+  /**
+   * Gets the game grid panel.
+   *
+   * @return the grid panel
+   */
   protected GridPanel getGridPanel() {
     return this.gridPanel;
   }
@@ -135,6 +150,9 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
     this.features = features;
   }
 
+  /**
+   * Refreshes the view by updating the player panels and repainting the grid.
+   */
   @Override
   public void refresh() {
     updatePlayerPanel(COLOR.RED, redPlayerPanel);
@@ -158,7 +176,10 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
     JLabel playerLabel = new JLabel(playerColor == COLOR.RED ? "Red Player" : "Blue Player");
     playerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
     playerPanel.add(playerLabel);
-
+    int points = calculatePoints(playerColor);
+    JLabel pointsLabel = new JLabel("Points: " + points);
+    pointsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    playerPanel.add(pointsLabel);
     Player player = playerColor == COLOR.RED ? model.getPlayers()[0] : model.getPlayers()[1];
     int cardIndex = 0;
     boolean isCurrentPlayer = model.getCurrentPlayer().getColor() == playerColor;
@@ -167,13 +188,11 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
       JPanel cardPanel = new JPanel(new BorderLayout());
       cardPanel.setPreferredSize(new Dimension(60, 60));
       cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
       if (isCurrentPlayer && cardIndex == selectedCardIndex) {
         cardPanel.setBackground(Color.GRAY);
       } else {
         cardPanel.setBackground(getCardColor(card.getColor()));
       }
-
       cardPanel.add(new JLabel(getDisplayValue(card.getNorth()),
               SwingConstants.CENTER), BorderLayout.NORTH);
       cardPanel.add(new JLabel(getDisplayValue(card.getSouth()),
@@ -184,16 +203,35 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
               SwingConstants.CENTER), BorderLayout.WEST);
       cardPanel.add(new JLabel(card.getColor().toString(),
               SwingConstants.CENTER), BorderLayout.CENTER);
-
       cardPanel.addMouseListener(new DeckClickListener(cardIndex, isCurrentPlayer));
       playerPanel.add(cardPanel);
-
       cardIndex++;
     }
-
     playerPanel.revalidate();
     playerPanel.repaint();
   }
+
+  /**
+   * Calculates points for a given player based on their color.
+   *
+   * @param playerColor the color of the player
+   * @return the total points of the player
+   */
+  private int calculatePoints(COLOR playerColor) {
+    int points = 0;
+
+    for (int row = 0; row < model.getGridSize(); row++) {
+      for (int col = 0; col < model.getGridSize(); col++) {
+        Card card = model.getCardAt(row, col);
+        if (card != null && card.getColor() == playerColor) {
+          points++;
+        }
+      }
+    }
+
+    return points;
+  }
+
 
   /**
    * Displays the game over message.
@@ -201,13 +239,32 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
   @Override
   public void displayGameOverMessage() {
     String winnerMessage = model.getWinner();
-    String message = winnerMessage.equals("Tie") ? "It's a tie!" : winnerMessage + " wins!";
-    JOptionPane.showMessageDialog(this, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+    int redPoints = calculatePoints(COLOR.RED);
+    int bluePoints = calculatePoints(COLOR.BLUE);
+
+    String message = winnerMessage.equals("Tie")
+            ? "It's a tie!"
+            : winnerMessage + " wins!";
+
+    message += "\nRed Player Points: " + redPoints;
+    message += "\nBlue Player Points: " + bluePoints;
+
+    JPanel gameOverPanel = new JPanel();
+    gameOverPanel.setLayout(new BoxLayout(gameOverPanel, BoxLayout.Y_AXIS));
+
+    JLabel titleLabel = new JLabel("Game Over!", SwingConstants.CENTER);
+    titleLabel.setFont(titleLabel.getFont().deriveFont(24f));
+    titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    gameOverPanel.add(titleLabel);
+
+    JLabel resultLabel = new JLabel(message, SwingConstants.CENTER);
+    resultLabel.setFont(resultLabel.getFont().deriveFont(18f));
+    resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    gameOverPanel.add(resultLabel);
+
+    JOptionPane.showMessageDialog(this, gameOverPanel, "Game Over", JOptionPane.PLAIN_MESSAGE);
   }
 
-  public void setSelectedCardIndex(int index) {
-    this.selectedCardIndex = index;
-  }
 
   /**
    * Displays the current player in the window title.
@@ -227,6 +284,24 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
     JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
   }
 
+
+  /**
+   * Checks if this view belongs to the red player.
+   * @return is it is RedView
+   */
+  public boolean isRedPlayerView() {
+    return this instanceof RedPlayerView;
+  }
+
+  /**
+   * Checks if this view belongs to the blue player.
+   * @return is it is BlueView
+   */
+  public boolean isBluePlayerView() {
+    return this instanceof BluePlayerView;
+  }
+
+
   /**
    * Mouse adapter for handling board cell clicks.
    */
@@ -235,6 +310,12 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
       int cellSize = gridPanel.getWidth() / model.getGridSize();
       int row = e.getY() / cellSize;
       int col = e.getX() / cellSize;
+
+      if ((model.getCurrentPlayer().getColor() == COLOR.RED && !isRedPlayerView()) ||
+              (model.getCurrentPlayer().getColor() == COLOR.BLUE && !isBluePlayerView())) {
+        displayErrorMessage("It is not your turn!");
+        return;
+      }
       features.handleCellClick(row, col);
     }
   }

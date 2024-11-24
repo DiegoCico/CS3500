@@ -120,7 +120,9 @@ public class GameModel implements Game, ReadOnlyGameModel {
    */
   private List<Card> drawCards(List<Card> deck, int numCards, COLOR playerColor) {
     List<Card> playerHand = new ArrayList<>();
+
     for (int i = 0; i < numCards && !deck.isEmpty(); i++) {
+
       CardModel card = (CardModel) deck.remove(0);
       card.switchColor(playerColor);
       playerHand.add(card);
@@ -160,6 +162,7 @@ public class GameModel implements Game, ReadOnlyGameModel {
 
     if (grid.validPosition(row, col)) {
       currentPlayer.removeCard(currentPlayer.getHand().indexOf(card));
+
       grid.placeCard(row, col, card);
     } else {
       throw new IllegalStateException("Cannot place a card in an occupied or invalid cell.");

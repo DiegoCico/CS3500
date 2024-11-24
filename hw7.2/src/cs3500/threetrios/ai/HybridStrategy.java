@@ -1,6 +1,6 @@
 package cs3500.threetrios.ai;
 
-import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class HybridStrategy implements PosnStrategy {
    * @return an array containing the row, column, and card index for the chosen move
    */
   @Override
-  public int[] choosePositions(Game game) {
+  public int[] choosePositions(ReadOnlyGameModel game) {
     int[] bestMove = new int[] {-1, -1, -1};
     int bestScore = Integer.MIN_VALUE;
 
@@ -59,7 +59,7 @@ public class HybridStrategy implements PosnStrategy {
    * @param move the move represented as [row, column, card index]
    * @return the combined score of the move based on all strategies
    */
-  public int evaluateMove(Game game, int[] move) {
+  public int evaluateMove(ReadOnlyGameModel game, int[] move) {
     if (move[0] == -1) {
       return Integer.MIN_VALUE;
     }
@@ -81,7 +81,7 @@ public class HybridStrategy implements PosnStrategy {
    * @return the score of the move, 0 by default
    */
   @Override
-  public int evaluatePosition(Game game, int row, int col, int cardIndex) {
+  public int evaluatePosition(ReadOnlyGameModel game, int row, int col, int cardIndex) {
     return 0;
   }
 }

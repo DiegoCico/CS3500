@@ -1,7 +1,7 @@
 package cs3500.threetrios.ai;
 
 import cs3500.threetrios.card.Card;
-import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 import cs3500.threetrios.player.Player;
 
 /**
@@ -17,7 +17,7 @@ public class MinMaxStrategy implements PosnStrategy {
    * @return an array containing the row, column, and card index for the chosen move
    */
   @Override
-  public int[] choosePositions(Game game) {
+  public int[] choosePositions(ReadOnlyGameModel game) {
     int[] bestMove = new int[3];
     int minOpponentScore = Integer.MAX_VALUE;
 
@@ -52,7 +52,7 @@ public class MinMaxStrategy implements PosnStrategy {
    * @return the score based on the number of opponent cards flipped
    */
   @Override
-  public int evaluatePosition(Game game, int row, int col, int cardIndex) {
+  public int evaluatePosition(ReadOnlyGameModel game, int row, int col, int cardIndex) {
     int score = 0;
 
     int[][] directions = {
@@ -84,7 +84,7 @@ public class MinMaxStrategy implements PosnStrategy {
    * @param game a simulated game state after the player has placed a card
    * @return the best score the opponent can achieve
    */
-  private int evaluateOpponentBestMove(Game game) {
+  private int evaluateOpponentBestMove(ReadOnlyGameModel game) {
     Player opponent = game.getCurrentPlayer();
     int maxScore = Integer.MIN_VALUE;
 

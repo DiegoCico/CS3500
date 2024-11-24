@@ -1,14 +1,15 @@
-package cs3500.threetrios.gui;
+package cs3500.threetrios.controller;
 
 import java.util.HashSet;
 import java.util.List;
 
-import cs3500.threetrios.ai.HybridStrategy;
+import cs3500.threetrios.ai.PosnStrategy;
 import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.card.Card;
 import cs3500.threetrios.game.Cell;
-
 import cs3500.threetrios.game.Game;
+import cs3500.threetrios.gui.Features;
+import cs3500.threetrios.gui.ThreeTriosGameView;
 import cs3500.threetrios.player.Player;
 
 /**
@@ -20,7 +21,7 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
   private final Game model;
   private final ThreeTriosGameView view;
   private Card selectedCard = null;
-  private final HybridStrategy strategy;
+  private final PosnStrategy strategy;
 
   /**
    * Constructs a controller with a strategy for AI moves.
@@ -29,11 +30,16 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
    * @param view the game view
    * @param strategy the strategy controller for AI moves
    */
-  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view, HybridStrategy strategy) {
+  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view, PosnStrategy strategy) {
     this.model = model;
     this.view = view;
     this.strategy = strategy;
-    this.view.setFeatures(new FeaturesImpl());
+
+    if (this.view != null) {
+      this.view.setFeatures(new FeaturesImpl());
+      this.view.refresh();
+      this.view.displayCurrentPlayer(model.getCurrentPlayer().getName());
+    }
   }
 
   /**
@@ -47,27 +53,14 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
   }
 
   /**
-   * Checks over the player click and make sure there is a card selected
-   * and as well there is a valid row and column to place the card. If
-   * all is true then it places the card.
+   * Handles the action when a cell on the game grid is clicked.
+   *
    * @param row the row of the clicked cell.
    * @param col the column of the clicked cell.
    */
   @Override
   public void handleCellClick(int row, int col) {
     Player currentPlayer = model.getCurrentPlayerModel();
-    if ((currentPlayer.getColor() == COLOR.RED && !view.isRedPlayerView()) ||
-            (currentPlayer.getColor() == COLOR.BLUE && !view.isBluePlayerView())) {
-      view.displayErrorMessage("It is not your turn!");
-      return;
-    }
-
-    System.out.println("Cell clicked: " + row + ", " + col);
-    if (model.isGameOver()) {
-      view.displayGameOverMessage();
-      return;
-    }
-
     try {
       Card cardToPlace = selectedCard != null ? selectedCard
               : (currentPlayer.getHand().isEmpty() ? null : currentPlayer.getHand().get(0));
@@ -77,39 +70,46 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
         return;
       }
 
+      // Place the card and refresh the view
       model.placeCard(row, col, cardToPlace);
       model.battleCards(row, col, new HashSet<>());
       selectedCard = null;
       view.refresh();
+      System.out.println(model.getGrid().getCard(row,col));
+      System.out.println(row + " " + col);
 
       if (model.isGameOver()) {
         view.displayGameOverMessage();
-        view.displayErrorMessage("Game Over: " + model.getWinner());
-      } else {
-        model.switchTurns();
-        view.displayCurrentPlayer(model.getCurrentPlayer().getName());
+        return;
+      }
 
-        ((ThreeTriosViewImpl) view).setSelectedCardIndex(-1);
-        view.refresh();
+      model.switchTurns();
+      view.displayCurrentPlayer(model.getCurrentPlayer().getName());
 
-        if (strategy != null && model.getCurrentPlayer().getColor() == COLOR.BLUE) {
-          handleAIMove();
-        }
+      // Check if the AI should play next
+      if (strategy != null && model.getCurrentPlayer().getColor() == COLOR.BLUE) {
+        handleAIMove();
       }
     } catch (IllegalStateException exception) {
       view.displayErrorMessage("Invalid move. Try again.");
     }
   }
 
+  /**
+   * Testing purposes.
+   * @param cardIndx for testing.
+   */
+  public void setSelectedCard(int cardIndx) {
+    selectedCard = model.getCurrentPlayer().getHand().get(cardIndx);
+  }
 
   /**
-   * Makes sure it selects a valid card index.
+   * Handles the action when a card is selected by the player.
+   *
    * @param cardIndex the index of the selected card in the player's hand.
    */
   @Override
   public void handleCardSelection(int cardIndex) {
-    System.out.println("Card Index: " + cardIndex
-            + " Player: " + model.getCurrentPlayer().getColor());
     Player currentPlayer = model.getCurrentPlayerModel();
     if (cardIndex < 0 || cardIndex >= currentPlayer.getHand().size()) {
       view.displayErrorMessage("Invalid card selection.");
@@ -121,59 +121,45 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
   }
 
   /**
-   * Handles the move of the AI, sees if it is a valid move
-   * and if it is not a valid move it sees what other moves it can
-   * do.
+   * Handles the action when the players plays
+   * it looks through all the strategies the AI has and
+   * it picks the best one.
+   *
    */
   @Override
   public void handleAIMove() {
-    if (model.isGameOver()) {
-      view.displayGameOverMessage();
-      return;
-    }
+    try {
+      AIController aiController =
+              new AIController(model, strategy, model.getCurrentPlayer().getColor());
+      int[] move = aiController.makeMove();
 
-    int[] bestMove = strategy.choosePositions(model);
-    boolean movePlayed = false;
-
-    while (!movePlayed) {
-      if (bestMove[0] != -1 && bestMove[1] != -1 && bestMove[2] != -1) {
-        Card aiCard = model.getCurrentPlayerModel().getHand().get(bestMove[2]);
-
-        System.out.println("Attempting move at: Row " + bestMove[0] + ", Col " + bestMove[1]);
-
-        if (model.isMoveLegal(bestMove[0], bestMove[1])) {
-          model.placeCard(bestMove[0], bestMove[1], aiCard);
-          model.battleCards(bestMove[0], bestMove[1], new HashSet<>());
-          view.refresh();
-          movePlayed = true;
-
-          if (model.isGameOver()) {
-            view.displayGameOverMessage();
-            view.displayErrorMessage("Game Over: " + model.getWinner());
-          } else {
-            model.switchTurns();
-            view.displayCurrentPlayer(model.getCurrentPlayer().getName());
-          }
-        } else {
-          System.out.println("Move invalid. Attempting fallback to top-right area.");
-
-          bestMove = findTopRightAvailableMove(model);
-          if (bestMove == null) {
-            view.displayErrorMessage("AI could not find a valid move.");
-            break;
-          }
-        }
+      if (move == null) {
+        int[] topRight = findTopRightAvailableMove(model);
+        Card card = model.getCurrentPlayer().getCard(topRight[2]);
+        model.placeCard(topRight[0], topRight[1], card);
       } else {
-        view.displayErrorMessage("AI could not find a valid move.");
-        break;
+        Card card = model.getCurrentPlayer().getCard(move[2]);
+        model.placeCard(move[0], move[1], card);
       }
+
+      view.refresh();
+      if (model.isGameOver()) {
+        view.displayGameOverMessage();
+      } else {
+        model.switchTurns();
+        view.displayCurrentPlayer(model.getCurrentPlayer().getName());
+      }
+    } catch (Exception e) {
+      view.displayErrorMessage("AI encountered an issue: " + e.getMessage());
     }
   }
 
   /**
-   * Finds the top-right or nearest available legal spot to place a card.
+   * Finds the top-right available move on the grid.
+   * Serves as a fallback for the AI.
+   *
    * @param model the game model
-   * @return an array [row, col, cardIndex] for a legal move, or null if none found
+   * @return an array containing the row, column, and card index for the move
    */
   private int[] findTopRightAvailableMove(Game model) {
     int numCols = model.getGrid().getCols();
@@ -186,24 +172,25 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
                 model.getGrid().isEmpty(row, col)) {
 
           for (int cardIndex = 0; cardIndex < hand.size(); cardIndex++) {
-            Card card = hand.get(cardIndex);
-
             if (model.isMoveLegal(row, col)) {
-              System.out.println("Found fallback move at Row " + row + ", Col " + col);
               return new int[] { row, col, cardIndex };
             }
           }
         }
       }
     }
-    System.out.println("No available moves in the top-right area.");
     return null;
   }
 
+  /**
+   * Implementation of the Features interface to handle
+   * actions for the controller.
+   */
   private class FeaturesImpl implements Features {
 
     /**
-     * Handle the player cell click.
+     * Handles the action when a cell on the game grid is clicked.
+     *
      * @param row the row of the clicked cell.
      * @param col the column of the clicked cell.
      */
@@ -213,7 +200,8 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
     }
 
     /**
-     * handle the player card selection click.
+     * Handles the action when a card is selected by the player.
+     *
      * @param cardIndex the index of the selected card in the player's hand.
      */
     @Override
@@ -222,7 +210,10 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
     }
 
     /**
-     * handle the AI moves and logics.
+     * Handles the action when the players plays
+     * it looks through all the strategies the AI has and
+     * it picks the best one.
+     *
      */
     @Override
     public void handleAIMove() {

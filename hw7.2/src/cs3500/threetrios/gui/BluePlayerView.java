@@ -1,7 +1,6 @@
 package cs3500.threetrios.gui;
 
 import java.awt.Color;
-import javax.swing.JPanel;
 
 import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.game.ReadOnlyGameModel;
@@ -10,6 +9,8 @@ import cs3500.threetrios.game.ReadOnlyGameModel;
  * View implementation dedicated to controlling the Blue Player.
  */
 public class BluePlayerView extends ThreeTriosViewImpl {
+
+  private String lastErrorMessage;
 
   /**
    * Constructs the Blue Player view with the game model.
@@ -22,9 +23,11 @@ public class BluePlayerView extends ThreeTriosViewImpl {
     getContentPane().setBackground(Color.CYAN);
   }
 
+  /**
+   * Refreshes the view to reflect the current game state.
+   */
   @Override
   public void refresh() {
-    // Only update the blue player panel
     updatePlayerPanel(COLOR.BLUE, getBluePlayerPanel());
     getGridPanel().repaint();
     revalidate();
@@ -38,7 +41,16 @@ public class BluePlayerView extends ThreeTriosViewImpl {
    */
   @Override
   public void displayErrorMessage(String message) {
-    // Optional: Customize error messages for Blue Player
-    super.displayErrorMessage("Blue Player: " + message);
+    lastErrorMessage = message;
+    super.displayErrorMessage("Red Player: " + message + "\n" + lastErrorMessage);
   }
+
+  /**
+   * Retrieves the error message on the popup panel.
+   * @return the error message
+   */
+  public String getLastErrorMessage() {
+    return lastErrorMessage;
+  }
+
 }

@@ -1,6 +1,4 @@
-package cs3500.threetrios.controller;
-
-import cs3500.threetrios.gui.Features;
+package cs3500.threetrios.gui;
 
 /**
  * Represents the view interface for the Three Trios game, responsible for displaying
