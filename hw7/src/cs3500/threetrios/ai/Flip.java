@@ -1,7 +1,7 @@
 package cs3500.threetrios.ai;
 
 import cs3500.threetrios.card.Card;
-import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 import cs3500.threetrios.player.Player;
 
 /**
@@ -19,7 +19,7 @@ public class Flip implements PosnStrategy {
    * @return an array containing the row, column, and card index for the best move
    */
   @Override
-  public int[] choosePositions(Game game) {
+  public int[] choosePositions(ReadOnlyGameModel game) {
     int[] play = new int[3];
     int bestScore = -1;
 
@@ -52,7 +52,7 @@ public class Flip implements PosnStrategy {
    * @return the score based on the number of opponent cards flipped
    */
   @Override
-  public int evaluatePosition(Game game, int row, int col, int cardIndex) {
+  public int evaluatePosition(ReadOnlyGameModel game, int row, int col, int cardIndex) {
     int score = 0;
 
     int[][] directions = {

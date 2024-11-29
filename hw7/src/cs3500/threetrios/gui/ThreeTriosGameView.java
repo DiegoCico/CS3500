@@ -37,4 +37,17 @@ public interface ThreeTriosGameView {
    * @param message a String representing the error message to display.
    */
   void displayErrorMessage(String message);
+
+  /**
+   * Checks if this view belongs to the red player.
+   * @return is it is RedView
+   */
+  boolean isRedPlayerView();
+
+  /**
+   * Checks if this view belongs to the blue player.
+   * @return is it is BlueView
+   */
+  boolean isBluePlayerView();
+
 }

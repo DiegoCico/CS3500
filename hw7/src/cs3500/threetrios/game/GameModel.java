@@ -6,15 +6,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import javax.swing.*;
-
 import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.card.Card;
 import cs3500.threetrios.card.CardModel;
-import cs3500.threetrios.controller.AbstractController;
-import cs3500.threetrios.gui.AbstractPlayerView;
-import cs3500.threetrios.gui.Features;
-import cs3500.threetrios.gui.FeaturesImpl;
 import cs3500.threetrios.parser.BoardConfigParser;
 import cs3500.threetrios.player.Player;
 import cs3500.threetrios.player.PlayerModel;
@@ -126,7 +120,9 @@ public class GameModel implements Game, ReadOnlyGameModel {
    */
   private List<Card> drawCards(List<Card> deck, int numCards, COLOR playerColor) {
     List<Card> playerHand = new ArrayList<>();
+
     for (int i = 0; i < numCards && !deck.isEmpty(); i++) {
+
       CardModel card = (CardModel) deck.remove(0);
       card.switchColor(playerColor);
       playerHand.add(card);
@@ -166,6 +162,7 @@ public class GameModel implements Game, ReadOnlyGameModel {
 
     if (grid.validPosition(row, col)) {
       currentPlayer.removeCard(currentPlayer.getHand().indexOf(card));
+
       grid.placeCard(row, col, card);
     } else {
       throw new IllegalStateException("Cannot place a card in an occupied or invalid cell.");
@@ -426,86 +423,5 @@ public class GameModel implements Game, ReadOnlyGameModel {
   public Player getCurrentPlayerModel() {
     return players[turn];
   }
-
-  /**
-   * Starts the game, alternating turns between players and checking win conditions.
-   *
-   * @param view           the game view to display updates and messages
-   * @param redController  the controller for the red player
-   * @param blueController the controller for the blue player
-   */
-  public void startGame(AbstractPlayerView playerOneView, AbstractController playerOneController,
-                        AbstractPlayerView playerTwoView, AbstractController playerTwoController) {
-    // Set features for both views
-    playerOneView.setFeatures(playerOneController);
-    playerTwoView.setFeatures(playerTwoController);
-
-    // Show both views
-    SwingUtilities.invokeLater(() -> {
-      playerOneView.setVisible(true);
-      playerTwoView.setVisible(true);
-
-      // Initial refresh to display the starting state
-      playerOneView.refresh();
-      playerTwoView.refresh();
-    });
-
-    // Display the initial player's turn in both views
-    String currentPlayerName = players[0].getName();
-    String finalCurrentPlayerName = currentPlayerName;
-    SwingUtilities.invokeLater(() -> {
-      playerOneView.displayCurrentPlayer(finalCurrentPlayerName);
-      playerTwoView.displayCurrentPlayer(finalCurrentPlayerName);
-    });
-
-    // Game loop
-    while (!isGameOver()) {
-      try {
-        if (players[turn].getColor() == COLOR.RED) {
-          // Player One's turn
-          playerOneView.setFeatures(playerOneController);
-          playerOneController.makeMove();
-        } else {
-          // Player Two's turn
-          playerTwoView.setFeatures(playerTwoController);
-          playerTwoController.makeMove();
-        }
-
-        // Refresh both views after a move
-        SwingUtilities.invokeLater(() -> {
-          playerOneView.refresh();
-          playerTwoView.refresh();
-        });
-
-        // Switch turns and update titles
-        switchTurns();
-        currentPlayerName = players[turn].getName();
-        String finalCurrentPlayerName1 = currentPlayerName;
-        SwingUtilities.invokeLater(() -> {
-          playerOneView.displayCurrentPlayer(finalCurrentPlayerName1);
-          playerTwoView.displayCurrentPlayer(finalCurrentPlayerName1);
-        });
-
-      } catch (IllegalStateException e) {
-        // Display error message in the active player's view
-        String errorMessage = "Invalid move: " + e.getMessage();
-        if (turn == 0) {
-          playerOneView.displayErrorMessage(errorMessage);
-        } else {
-          playerTwoView.displayErrorMessage(errorMessage);
-        }
-      }
-    }
-
-    // Game Over - Display the winner in both views
-    String winnerMessage = getWinner();
-    SwingUtilities.invokeLater(() -> {
-      playerOneView.displayGameOverMessage();
-      playerTwoView.displayGameOverMessage();
-    });
-  }
-
-
-
 
 }

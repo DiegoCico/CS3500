@@ -15,15 +15,14 @@ public interface Features {
   void handleCellClick(int row, int col);
 
   /**
+   * Handles the action when an AI move is triggered.
+   */
+  void handleAIMove();
+
+  /**
    * Handles the action when a card is selected by the player.
    *
    * @param cardIndex the index of the selected card in the player's hand.
    */
   void handleCardSelection(int cardIndex);
-
-  /**
-   * Handles the AI's move when it is the AI's turn.
-   * Processes the logic for the AI to make its move automatically.
-   */
-  void handleAIMove();
 }

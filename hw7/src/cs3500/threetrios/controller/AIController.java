@@ -1,138 +1,56 @@
 package cs3500.threetrios.controller;
 
-import cs3500.threetrios.ai.HybridStrategy;
-import cs3500.threetrios.card.Card;
+import cs3500.threetrios.ai.PosnStrategy;
+import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.game.Game;
-import cs3500.threetrios.gui.AbstractPlayerView;
-
-import java.util.HashSet;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 
 /**
- * Represents the AI controller for the Three Trios game.
- * This controller handles the behavior of the AI player,
- * including choosing moves using a strategy,
- * handling fallback logic for invalid moves,
- * and managing the AI's turn progression.
+ * Manages the behavior of an AI player in the
+ * Three Trios game. Interacts with the game model using strategies to
+ * decide and execute moves for the AI-controlled player.
  */
-
-public class AIController extends AbstractController {
-  private final HybridStrategy strategy;
+public class AIController {
+  private final Game model;
+  private final PosnStrategy strategy;
+  private final COLOR playerColor;
 
   /**
-   * Constructs an AIController with the specified game model, view, and strategy.
+   * Constructs an AIController.
    *
-   * @param model    the game model used to manage game state and logic
-   * @param strategy the strategy used by the AI to decide its moves
-   * @param view     the game view used to display updates to the user
+   * @param model       the game model to interact with
+   * @param strategy    the strategy the AI will use to determine its moves
+   * @param playerColor the color representing the AI player
    */
-  public AIController(Game model, HybridStrategy strategy, AbstractPlayerView view) {
-    super(model, view);
+  public AIController(Game model, PosnStrategy strategy, COLOR playerColor) {
+    this.model = model;
     this.strategy = strategy;
+    this.playerColor = playerColor;
   }
 
   /**
-   * Executes the AI's turn by choosing and playing a move
-   * based on the provided strategy.
-   * If the strategy fails to find a valid move,
-   * a fallback method attempts to locate legal move.
-   * Updates the view and switches turns after the move is made.
+   * Makes a move for the AI player using its defined strategy.
+   * The AI will attempt to choose a valid position on the grid to place its card.
+   *
+   * @return an array of ints representing a move:
+   *         - [0]: row index of move
+   *         - [1]: column index of  move
+   *         - [2]: the card index from the player's hand
+   *         Returns null if the move is invalid or cannot be made.
    */
-  @Override
-  public void makeMove() {
-    if (model.isGameOver()) {
-      view.displayGameOverMessage();
-      return;
-    }
-
-    int[] bestMove = strategy.choosePositions(model);
-    if (!playMove(bestMove)) {
-      int[] fallbackMove = findFallbackMove();
-      if (!playMove(fallbackMove)) {
-        view.displayErrorMessage("AI could not find a valid move.");
-      }
-    }
-
-    if (!model.isGameOver()) {
-      model.switchTurns();
-      view.displayCurrentPlayer(model.getCurrentPlayer().getName());
-    } else {
-      view.displayGameOverMessage();
-    }
-  }
-
-  /**
-   * Attempts to play a move for the AI.
-   * @param move an array of {row, col, cardIndex}, or null if no move is available.
-   * @return true if the move was successfully played, false otherwise.
-   */
-  private boolean playMove(int[] move) {
-    if (move == null || move.length != 3) return false;
-
-    try {
-      Card aiCard = model.getCurrentPlayerModel().getHand().get(move[2]);
-      if (model.isMoveLegal(move[0], move[1])) {
-        model.placeCard(move[0], move[1], aiCard);
-        model.battleCards(move[0], move[1], new HashSet<>());
-        view.refresh();
-        return true;
-      }
-    } catch (Exception e) {
-      System.out.println("AI move failed: " + e.getMessage());
-    }
-    return false;
-  }
-
-  /**
-   * Finds a fallback move by iterating over the grid to locate a legal move.
-   * @return an array {row, col, cardIndex} for the fallback move, or null if none is found.
-   */
-  private int[] findFallbackMove() {
-    for (int row = 0; row < model.getGrid().getRows(); row++) {
-      for (int col = 0; col < model.getGrid().getCols(); col++) {
-        if (model.isMoveLegal(row, col)) {
-          return new int[]{row, col, 0};
+  public int[] makeMove() {
+    if (model.getCurrentPlayer().getColor() == playerColor) {
+      int[] move = strategy.choosePositions((ReadOnlyGameModel) model);
+      if (move != null && move.length == 3) {
+        try {
+          return move;
+        } catch (IllegalArgumentException e) {
+          System.err.println(e.getMessage());
         }
+      } else {
+        System.err.println("AI failed to determine a valid move.");
       }
     }
     return null;
   }
-
-
-
-  /**
-   * Handles cell clicks, but AI does not process
-   * manual input, so this method is ignored.
-   *
-   * @param row the row of the clicked cell
-   * @param col the column of the clicked cell
-   */
-  @Override
-  public void handleCellClick(int row, int col) {
-    System.out.println("AI cannot handle cell clicks. Ignoring the input.");
-  }
-
-  /**
-   * Handles card selection, but AI does not process manual input,
-   * so this method is ignored.
-   *
-   * @param cardIndex the index of the selected card in the player's hand
-   */
-  @Override
-  public void handleCardSelection(int cardIndex) {
-    System.out.println("AI cannot handle card selection. Ignoring the input.");
-  }
-
-  /**
-   * Handles AI moves by delegating to the makeMove method.
-   */
-  @Override
-  public void handleAIMove() {
-    if (!model.isGameOver()) {
-      model.switchTurns();
-    }
-
-  }
-
-
-
 }

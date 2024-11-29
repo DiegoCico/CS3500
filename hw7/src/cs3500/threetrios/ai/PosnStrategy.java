@@ -1,6 +1,6 @@
 package cs3500.threetrios.ai;
 
-import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 
 /**
  * An interface for strategies that involve specific
@@ -14,7 +14,7 @@ public interface PosnStrategy {
    * @param game the current game state
    * @return an array containing the row, column, and card index for the best move
    */
-  int[] choosePositions(Game game);
+  int[] choosePositions(ReadOnlyGameModel game);
 
 
   /**
@@ -26,5 +26,5 @@ public interface PosnStrategy {
    * @param cardIndex the card to be placed
    * @return the score based on the number of opponent cards flipped
    */
-  int evaluatePosition(Game game, int row, int col, int cardIndex);
+  int evaluatePosition(ReadOnlyGameModel game, int row, int col, int cardIndex);
 }

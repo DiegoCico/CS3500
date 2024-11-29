@@ -1,7 +1,7 @@
 package cs3500.threetrios.ai;
 
 import cs3500.threetrios.card.Card;
-import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 import cs3500.threetrios.player.Player;
 
 /**
@@ -21,7 +21,7 @@ public class LeastFlippableStrategy implements PosnStrategy {
     *         index for the best move, or [-1, -1, -1] if no valid move is found.
    */
   @Override
-  public int[] choosePositions(Game game) {
+  public int[] choosePositions(ReadOnlyGameModel game) {
     int[] bestMove = new int[3];
     int minFlipRisk = Integer.MAX_VALUE;
 
@@ -56,7 +56,7 @@ public class LeastFlippableStrategy implements PosnStrategy {
    * @return the score based on the number of opponent cards flipped
    */
   @Override
-  public int evaluatePosition(Game game, int row, int col, int cardIndex) {
+  public int evaluatePosition(ReadOnlyGameModel game, int row, int col, int cardIndex) {
     return 0;
   }
 
@@ -71,7 +71,7 @@ public class LeastFlippableStrategy implements PosnStrategy {
    * @param card the card to be placed
    * @return the calculated flip risk value
    */
-  private int calculateFlipRisk(Game game, int row, int col, Card card) {
+  private int calculateFlipRisk(ReadOnlyGameModel game, int row, int col, Card card) {
     int risk = 0;
 
     int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
