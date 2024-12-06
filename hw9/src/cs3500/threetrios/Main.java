@@ -25,6 +25,9 @@ import cs3500.threetrios.gui.ThreeTriosViewImpl;
  */
 public class Main {
 
+  private static boolean blueHint = true;
+  private static boolean redHint = true;
+
   /**
    * Running the game.
    * @param args for the game set up.
@@ -36,7 +39,7 @@ public class Main {
           throw new IllegalArgumentException("\"human\" \"human\" or \"human\" \"strategy1");
         }
 
-        GameModel model = new GameModel("docs/boardNoHoles.config");
+        GameModel model = new GameModel("docs/boardNoHoles.config", null);
 
         if ("human".equalsIgnoreCase(args[1])) {
           // Human vs Human
@@ -60,8 +63,8 @@ public class Main {
     ThreeTriosGameView redView = new RedPlayerView(model);
     ThreeTriosGameView blueView = new BluePlayerView(model);
 
-    new ThreeTriosControllerImpl(model, redView);
-    new ThreeTriosControllerImpl(model, blueView);
+    new ThreeTriosControllerImpl(model, redView, redHint);
+    new ThreeTriosControllerImpl(model, blueView, blueHint);
   }
 
   /**
@@ -83,7 +86,7 @@ public class Main {
             ? new HybridStrategy(strategies)
             : strategies.get(0);
 
-    new ThreeTriosControllerImpl(model, unifiedView, combinedStrategy);
+    new ThreeTriosControllerImpl(model, unifiedView, redHint, combinedStrategy);
   }
 
   /**

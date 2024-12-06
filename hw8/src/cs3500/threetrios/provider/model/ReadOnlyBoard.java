@@ -15,6 +15,7 @@ public interface ReadOnlyBoard {
 
   /**
    * Calculates the winner of the game.
+   *
    * @return the winner
    * @throws IllegalStateException if the game is not over
    */
@@ -80,7 +81,7 @@ public interface ReadOnlyBoard {
    * @return the number of cards that would be flipped if this move was played
    * @throws IllegalArgumentException if card is null or x or y are invalid coordinates
    */
-  int possibleCardsFlipped(Card card, int x, int y);
+  int possibleCardsFlipped(CardAdapter card, int x, int y);
 
   /**
    * Gets the player that is currently making a turn.
@@ -94,5 +95,5 @@ public interface ReadOnlyBoard {
    * @return the player's hand
    * @throws IllegalArgumentException if player is null
    */
-  List<Card> getHand(Player player);
+  List<Slot> getHand(Player player);
 }

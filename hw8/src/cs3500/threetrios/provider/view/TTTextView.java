@@ -2,7 +2,6 @@ package cs3500.threetrios.provider.view;
 
 import java.util.List;
 import cs3500.threetrios.provider.controller.ViewFeatures;
-import cs3500.threetrios.provider.model.Card;
 import cs3500.threetrios.provider.model.ReadOnlyBoard;
 import cs3500.threetrios.provider.model.Slot;
 
@@ -46,7 +45,7 @@ public class TTTextView implements TTView {
       ret.append("\n");
     }
     ret.append("Hand:").append("\n");
-    List<Card> hand = model.getHand(model.curPlayer());
+    List<Slot> hand = model.getHand(model.curPlayer());
     for (Slot card : hand) {
       ret.append(card.toString()).append("\n");
     }

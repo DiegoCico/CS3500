@@ -1,7 +1,7 @@
 package cs3500.threetrios.provider.view;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -29,7 +29,7 @@ public class JFrameView extends JFrame implements TTView {
    */
   public JFrameView(ReadOnlyBoard model) {
     super();
-    this.model = Objects.requireNonNull(model);
+    this.model = model;
     this.gridPanel = new TTGridPanel(model);
     this.gridPanel.setBorder(BorderFactory.createEmptyBorder(4, 2, 4, 2));
     this.player1Panel = new TTPlayerPanel(Player.A, model);

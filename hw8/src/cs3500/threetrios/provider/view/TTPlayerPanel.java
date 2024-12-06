@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.swing.JPanel;
+
 import cs3500.threetrios.provider.controller.ViewFeatures;
-import cs3500.threetrios.provider.model.Card;
 import cs3500.threetrios.provider.model.Player;
 import cs3500.threetrios.provider.model.ReadOnlyBoard;
+import cs3500.threetrios.provider.model.Slot;
 
 /**
  * A panel that displays a players hand in a TT game.
@@ -39,11 +40,11 @@ public class TTPlayerPanel extends JPanel implements PlayerPanel {
 
   @Override
   public void refresh(int selectedCard) {
-    List<Card> hand = model.getHand(this.handOwner);
+    List<Slot> hand = model.getHand(this.handOwner);
     this.removeAll();
     this.setLayout(new GridLayout(hand.size(), 1));
     for (int cardIdx = 0; cardIdx < hand.size(); cardIdx++) {
-      JCell cell = new JCell(hand.get(cardIdx), selectedCard == cardIdx);
+      JCell cell = new JCell((Slot) hand.get(cardIdx), selectedCard == cardIdx);
       cell.setPreferredSize(new Dimension(this.getWidth(), this.getHeight() / hand.size()));
       this.add(cell);
     }

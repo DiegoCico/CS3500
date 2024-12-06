@@ -8,8 +8,10 @@ import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.card.Card;
 import cs3500.threetrios.game.Cell;
 import cs3500.threetrios.game.Game;
+import cs3500.threetrios.game.ReadOnlyGameModel;
 import cs3500.threetrios.gui.Features;
 import cs3500.threetrios.gui.ThreeTriosGameView;
+import cs3500.threetrios.level0.Hint0Impl;
 import cs3500.threetrios.player.Player;
 
 /**
@@ -20,26 +22,28 @@ import cs3500.threetrios.player.Player;
 public class ThreeTriosControllerImpl implements ThreeTriosGameController {
   private final Game model;
   private final ThreeTriosGameView view;
-  private Card selectedCard = null;
+  private final boolean enableHints;
+  private final Hint0Impl hintCalculator;
   private final PosnStrategy strategy;
+  private Card selectedCard = null;
 
   /**
    * Constructs a controller with a strategy for AI moves.
    *
-   * @param model the game model
-   * @param view the game view
+   * @param model    the game model
+   * @param view     the game view
    * @param strategy the strategy controller for AI moves
    */
-  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view, PosnStrategy strategy) {
+  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view, boolean enableHints, PosnStrategy strategy) {
     this.model = model;
     this.view = view;
+    this.enableHints = enableHints;
     this.strategy = strategy;
+    this.hintCalculator = new Hint0Impl((ReadOnlyGameModel) model);
 
-    if (this.view != null) {
-      this.view.setFeatures(new FeaturesImpl());
-      this.view.refresh();
-      this.view.displayCurrentPlayer(model.getCurrentPlayer().getName());
-    }
+    this.view.setFeatures(new FeaturesImpl());
+    view.displayCurrentPlayer(model.getCurrentPlayer().getName());
+    view.refresh();
   }
 
   /**
@@ -48,9 +52,34 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
    * @param model the game model
    * @param view the game view
    */
-  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view) {
-    this(model, view, null);
+  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view, boolean enableHints) {
+    this(model, view, enableHints, null);
   }
+
+  /**
+   * Returns the currently selected card.
+   *
+   * @return the selected card, or null if none is selected
+   */
+  public Card getSelectedCard() {
+    return selectedCard;
+  }
+
+  /**
+   * Calculates the hint for a specific cell using the selected card.
+   *
+   * @param row the row of the grid cell
+   * @param col the column of the grid cell
+   * @return the number of flips that would occur if the selected card is played in the cell
+   */
+  public int calculateHint(int row, int col) {
+    System.out.println(selectedCard);
+    if (selectedCard == null) {
+      return 0;
+    }
+    return hintCalculator.calculateHint(row, col, selectedCard);
+  }
+
 
   /**
    * Handles the action when a cell on the game grid is clicked.
@@ -117,8 +146,24 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
     }
 
     selectedCard = currentPlayer.getHand().get(cardIndex);
+
+    view.clearHints();
+
+    if (enableHints) {
+      for (int row = 0; row < model.getGrid().getRows(); row++) {
+        for (int col = 0; col < model.getGrid().getCols(); col++) {
+          int hintValue = calculateHint(row, col);
+          System.out.println("Hint value " + hintValue);
+          if (hintValue > 0) {
+            view.updateHint(row, col, String.valueOf(hintValue));
+          }
+        }
+      }
+    }
+
     view.refresh();
   }
+
 
   /**
    * Handles the action when the players plays

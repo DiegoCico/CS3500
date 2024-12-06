@@ -1,5 +1,8 @@
 package cs3500.threetrios.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cs3500.threetrios.card.Card;
 
 /**
@@ -102,6 +105,7 @@ public class GameGrid implements Grid {
     if (validPosition(row, col) && cells[row][col].isCardCell() &&
             cells[row][col].isEmpty()) {
       cells[row][col].placeCard(card);
+      cardPositions.put(card, new int[] { row, col });
       System.out.println(cells[row][col].toString());
     } else {
       System.out.println("Valid? " + validPosition(row, col));
@@ -225,4 +229,18 @@ public class GameGrid implements Grid {
   }
 
 
+  /**
+   * Keeps track of current card position.
+   * @return the card and its position
+   */
+  private final Map<Card, int[]> cardPositions = new HashMap<>();
+
+  /**
+   * Gets the current card location.
+   * @param card current or wanted card
+   * @return the row and col coordinates
+   */
+  public int[] getCardPositions(Card card) {
+    return cardPositions.get(card);
+  }
 }

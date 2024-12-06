@@ -1,8 +1,10 @@
 package cs3500.threetrios.gui;
 
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.JPanel;
 import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.card.Card;
@@ -16,14 +18,11 @@ import cs3500.threetrios.game.ReadOnlyGameModel;
  */
 public class GridPanel extends JPanel {
   private final ReadOnlyGameModel model;
+  private final Map<Point, String> hints;
 
-  /**
-   * Constructs a GridPanel with the specified game model.
-   *
-   * @param model the game model
-   */
   public GridPanel(ReadOnlyGameModel model) {
     this.model = model;
+    this.hints = new HashMap<>();
   }
 
   @Override
@@ -32,7 +31,46 @@ public class GridPanel extends JPanel {
     drawGrid(g);
     drawCards(g);
     drawGameStatus(g);
+    drawHints(g);
   }
+
+  /**
+   * Draws hints on the grid if hints are enabled.
+   * Highlights cells with semi-transparent colors and displays the number of flips.
+   *
+   * @param g the Graphics object
+   */
+  /**
+   * Draws hints on the grid in the bottom-right corner of each cell.
+   *
+   * @param g the Graphics object
+   */
+  private void drawHints(Graphics g) {
+    int gridSize = model.getGridSize();
+    int cellWidth = getWidth() / gridSize;
+    int cellHeight = getHeight() / gridSize;
+
+    g.setColor(Color.RED);
+    g.setFont(new Font("Arial", Font.PLAIN, 12));
+
+    for (Map.Entry<Point, String> entry : hints.entrySet()) {
+      Point cell = entry.getKey();
+      String hint = entry.getValue();
+
+      int x = cell.x * cellWidth;
+      int y = cell.y * cellHeight;
+
+      g.drawString(hint, x + cellWidth - 15, y + cellHeight - 5);
+    }
+  }
+
+
+  public void setHint(int row, int col, String hint) {
+    System.out.println("row " + row + " col " + col + " hint " + hint);
+    hints.put(new Point(row, col), hint);
+    repaint();
+  }
+
 
   /**
    * Draws the game grid on the panel, coloring each cell based on its type.
@@ -109,6 +147,14 @@ public class GridPanel extends JPanel {
    */
   private String getDisplayValue(int value) {
     return value == 10 ? "A" : String.valueOf(value);
+  }
+
+  /**
+   * Clears all hints from the grid.
+   */
+  public void clearHints() {
+    hints.clear();
+    repaint();
   }
 
   /**

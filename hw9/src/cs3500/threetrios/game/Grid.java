@@ -1,5 +1,7 @@
 package cs3500.threetrios.game;
 
+import java.util.Map;
+
 import cs3500.threetrios.card.Card;
 
 /**
@@ -80,5 +82,12 @@ public interface Grid {
    * @param col a col
    */
   void setCellType(int row, int col, Cell.CellType type);
+
+  /**
+   * Gets the current card location.
+   * @param card current or wanted card
+   * @return the row and col coordinates
+   */
+  int[] getCardPositions(Card card);
 
 }

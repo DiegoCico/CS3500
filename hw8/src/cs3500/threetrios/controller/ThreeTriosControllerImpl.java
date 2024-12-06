@@ -17,7 +17,7 @@ import cs3500.threetrios.player.Player;
  * responsible for managing user interactions,
  * processing game logic, and updating the view accordingly.
  */
-public class ThreeTriosControllerImpl implements ThreeTriosGameController {
+public class ThreeTriosControllerImpl implements ThreeTriosGameController, Features {
   private final Game model;
   private final ThreeTriosGameView view;
   private Card selectedCard = null;

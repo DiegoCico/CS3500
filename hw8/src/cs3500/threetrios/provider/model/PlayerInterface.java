@@ -1,8 +1,10 @@
 package cs3500.threetrios.provider.model;
+
 /**
  * Represents a player (either AI or an actual person).
  */
 public interface PlayerInterface {
+
   /**
    * Plays one card on the model.
    * @param model the model to make a move on

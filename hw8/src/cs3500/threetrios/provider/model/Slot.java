@@ -68,6 +68,7 @@ public interface Slot {
 
   /**
    * Gets the color of this slot as it is displayed graphically.
+   *
    * @return the color of this slot
    */
   Color getSlotColor();

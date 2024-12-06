@@ -63,6 +63,19 @@ public class ThreeTriosViewImpl extends JFrame implements ThreeTriosGameView {
     setVisible(true);
   }
 
+  public void updateHint(int row, int col, String hint) {
+    gridPanel.setHint(row, col, hint);
+  }
+
+  /**
+   * Clears all hints from the grid by delegating to the grid panel.
+   */
+  @Override
+  public void clearHints() {
+    gridPanel.clearHints();
+  }
+
+
   /**
    * Gets the red player panel.
    *

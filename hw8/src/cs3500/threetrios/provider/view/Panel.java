@@ -1,6 +1,6 @@
 package cs3500.threetrios.provider.view;
 
-import cs3500.threetrios.provider.controller.*;
+import cs3500.threetrios.provider.controller.ViewFeatures;
 
 /**
  * Represents a panel that can take in a features listener.

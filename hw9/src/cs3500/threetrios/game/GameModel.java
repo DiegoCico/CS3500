@@ -9,6 +9,8 @@ import java.util.Set;
 import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.card.Card;
 import cs3500.threetrios.card.CardModel;
+import cs3500.threetrios.level1.BattleRule;
+import cs3500.threetrios.level1.BattleRuleImpl;
 import cs3500.threetrios.parser.BoardConfigParser;
 import cs3500.threetrios.player.Player;
 import cs3500.threetrios.player.PlayerModel;
@@ -30,6 +32,19 @@ public class GameModel implements Game, ReadOnlyGameModel {
   private final Player[] players;
   private int turn;
   private Random rand = new Random();
+  private List<BattleRule> battleRules;
+
+
+  public GameModel(Grid grid, Player[] players, List<BattleRule> battleRules) {
+    if (grid == null || players == null || players.length != 2) {
+      throw new IllegalArgumentException("Grid and Players cannot be null");
+    }
+
+    this.grid = grid;
+    this.players = players;
+    this.turn = 0;
+    this.battleRules = battleRules != null ? battleRules : List.of(new BattleRuleImpl());
+  }
 
   /**
    * Constructs a GameModel with a specified grid and players.
@@ -55,11 +70,12 @@ public class GameModel implements Game, ReadOnlyGameModel {
    * @param path the file path for the configuration
    * @throws FileNotFoundException if the configuration file is not found
    */
-  public GameModel(String path) throws FileNotFoundException {
+  public GameModel(String path, List<BattleRule> battleRules) throws FileNotFoundException {
     GameModel parsedGame = BoardConfigParser.parseBoardConfig(path);
     this.grid = parsedGame.getGrid();
     this.players = parsedGame.getPlayers();
     this.turn = 0;
+    this.battleRules = battleRules != null ? battleRules : List.of(new BattleRuleImpl());
   }
 
   /**
@@ -238,20 +254,14 @@ public class GameModel implements Game, ReadOnlyGameModel {
     return new GameGrid(this.grid);
   }
 
-  /**
-   * Conducts a battle between the card placed at the specified row and column
-   * and adjacent cards.
-   *
-   * @param row the row where the card is located
-   * @param col the column where the card is located
-   */
+
+  // BATTLE MODE
   @Override
   public void battleCards(int row, int col, Set<Card> flippedCards) {
     Card placedCard = grid.getCard(row, col);
     flippedCards.add(placedCard);
 
     int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-    int[] opposingSides = {2, 3, 0, 1};
 
     for (int i = 0; i < directions.length; i++) {
       int newRow = row + directions[i][0];
@@ -260,27 +270,66 @@ public class GameModel implements Game, ReadOnlyGameModel {
       if (grid.validPosition(newRow, newCol)) {
         Card adjacentCard = grid.getCard(newRow, newCol);
 
-        if (adjacentCard != null
-                && adjacentCard.getColor() != placedCard.getColor()
-                && !flippedCards.contains(adjacentCard)) {
-          int placedCardAttack = getAttackValue(placedCard, i);
-          int adjacentCardAttack = getAttackValue(adjacentCard, opposingSides[i]);
+        if (adjacentCard != null && adjacentCard.getColor() != placedCard.getColor() &&
+                !flippedCards.contains(adjacentCard)) {
 
-          System.out.println("Placed card attack: "
-                  + placedCardAttack + ", Adjacent card attack: "
-                  + adjacentCardAttack + " (Direction: " + i + ")");
-
-          if (placedCardAttack > adjacentCardAttack) {
-            adjacentCard.switchColor(placedCard.getColor());
-            System.out.println("Flipping card at " + newRow + ", " + newCol);
-
-            flippedCards.add(adjacentCard);
-            battleCards(newRow, newCol, flippedCards);
+          for (BattleRule rule : battleRules) {
+            if (rule.shouldFlip(placedCard, adjacentCard, i)) {
+              adjacentCard.switchColor(placedCard.getColor());
+              flippedCards.add(adjacentCard);
+              battleCards(newRow, newCol, flippedCards);
+              break;
+            }
           }
         }
       }
     }
   }
+
+  //NORMAL
+//  /**
+//   * Conducts a battle between the card placed at the specified row and column
+//   * and adjacent cards.
+//   *
+//   * @param row the row where the card is located
+//   * @param col the column where the card is located
+//   */
+//  @Override
+//  public void battleCards(int row, int col, Set<Card> flippedCards) {
+//    Card placedCard = grid.getCard(row, col);
+//    flippedCards.add(placedCard);
+//
+//    int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+//    int[] opposingSides = {2, 3, 0, 1};
+//
+//    for (int i = 0; i < directions.length; i++) {
+//      int newRow = row + directions[i][0];
+//      int newCol = col + directions[i][1];
+//
+//      if (grid.validPosition(newRow, newCol)) {
+//        Card adjacentCard = grid.getCard(newRow, newCol);
+//
+//        if (adjacentCard != null
+//                && adjacentCard.getColor() != placedCard.getColor()
+//                && !flippedCards.contains(adjacentCard)) {
+//          int placedCardAttack = getAttackValue(placedCard, i);
+//          int adjacentCardAttack = getAttackValue(adjacentCard, opposingSides[i]);
+//
+//          System.out.println("Placed card attack: "
+//                  + placedCardAttack + ", Adjacent card attack: "
+//                  + adjacentCardAttack + " (Direction: " + i + ")");
+//
+//          if (placedCardAttack > adjacentCardAttack) {
+//            adjacentCard.switchColor(placedCard.getColor());
+//            System.out.println("Flipping card at " + newRow + ", " + newCol);
+//
+//            flippedCards.add(adjacentCard);
+//            battleCards(newRow, newCol, flippedCards);
+//          }
+//        }
+//      }
+//    }
+//  }
 
   /**
    * Gets a certain attack value associated with a Card and direction.

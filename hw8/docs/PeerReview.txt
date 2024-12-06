@@ -1,0 +1,38 @@
+Interfaces
+The interfaces were a bit tricky to work with because the comments
+did not provide enough context about how the code was supposed to function.
+For example, the Slot interface was used to implement cards, but the Card
+class had several other useful methods that were not part of the interface.
+ This made it harder to figure out how to use the code effectively.
+It might be helpful to expand the interface to include these additional
+methods or provide clearer documentation to guide users.
+
+Design
+The design followed a well-structured MVC design and was quite creative and showed
+some interesting ideas, but it was also a
+little hard to follow. For example, there’s an enum for players,
+but there are also four interfaces—GamePlayer, PlayerAction, PlayerInterface,
+and Board—that all seem to handle player-related actions.
+It was a bit confusing to figure out which interface was responsible for what.
+When we spoke with the provider group, they explained that the Slot interface
+was meant to represent the Card, but the Card class also manages battling and score-keeping.
+That felt like too much responsibility for one class and could be split into smaller,
+more focused components.
+The ReadOnlyBoard class did many different things. It tracked scores, handled player actions,
+and stored players’ cards. Creating a script or interface for player actions might
+simplify things and make the design easier to follow.
+After spending more time with the code, we realized that the ReadOnlyBoard also uses
+other methods for player actions, which made things harder to track.
+
+Naming
+Some of the naming choices made the code harder to understand. For instance, GamePlayer, PlayerAction,
+and PlayerInterface all sound like they do similar things but have very different roles. It took a bit
+to review main methods and views to determine what each one was for.
+Using more descriptive and consistent names could make it easier to understand the purpose of
+each class or interface immediately.
+
+Documentation
+The code could benefit from clearer documentation. For example, the Slot and Card interfaces did not
+have enough explanation, so it was not immediately clear how they should interact.
+Adding detailed comments or a Javadoc for each interface would make the design and logic easier to understand.
+This would also help future developers (or collaborators) integrate the code more easily.

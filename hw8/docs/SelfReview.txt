@@ -1,0 +1,31 @@
+
+
+QUESTIONS
+
+What do you wish you had done differently in your design/implementation? Did you learn any lessons from the code given to you, or the updates you had to make for your customers?
+
+We realized how important clear JDocs and well-defined interfaces are for a project.
+ They make everything much easier to understand and use.
+Another valuable lesson we learned is the significance of good design
+not just for the developer writing the code but also for anyone else who has to work with it.
+If we could go back, we would change how we handled the board and its cells.
+We currently have two classes: one for the grid and another for the cells.
+This setup has made things more complicated than they needed to be.
+Instead, we could have used a single class for the grid and an enum for the cells.
+This would have made the design simpler and more organized.
+
+What was your experience like with your providers?
+
+Working with my provider's code was quite challenging yet rewarding.
+The code was difficult to follow because it needed more interfaces to clarify
+the functions of various components.
+Additionally, their design differed significantly from ours, making integrating their code
+ into our project challenging because the adaptors could not convert seamlessly.
+For instance, they didn't have a class dedicated to handling player actions.
+Instead, they relied on an enum, which offered limited functionality.
+Also, the way the defined a player was completely different from our player definition,
+which made adapting it incredibly difficult.
+Another issue was that they linked the "Cells" on the board to both the game board and the cards,
+confusing and making it complicated to adapt their setup to ours.
+Despite our frustrations, this experience taught us a valuable lesson about the importance of
+straightforward design and modular code.

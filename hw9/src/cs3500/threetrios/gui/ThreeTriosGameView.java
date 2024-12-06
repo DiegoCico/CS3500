@@ -50,4 +50,8 @@ public interface ThreeTriosGameView {
    */
   boolean isBluePlayerView();
 
+  void updateHint(int row, int col, String hint);
+
+  void clearHints();
+
 }
