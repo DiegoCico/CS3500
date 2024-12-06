@@ -1,4 +1,4 @@
-package cs3500.threetrios.provider.card;
+package cs3500.threetrios.card;
 
 /**
  * Enum representing card numbers (1-9 and A).

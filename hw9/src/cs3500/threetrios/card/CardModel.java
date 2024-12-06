@@ -1,4 +1,4 @@
-package cs3500.threetrios.provider.card;
+package cs3500.threetrios.card;
 
 import java.util.Objects;
 

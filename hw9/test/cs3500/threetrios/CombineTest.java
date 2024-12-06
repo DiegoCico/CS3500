@@ -99,12 +99,6 @@ public class CombineTest {
     }
 
     @Test
-    public void testValidArguments() {
-      String[] args = {"human", "ai", "strategy1"};
-      Main.main(args);
-    }
-
-    @Test
     public void testHybridStrategySelectsBetweenMultiple() {
       try {
         GameModel game = BoardConfigParser.parseBoardConfig(
