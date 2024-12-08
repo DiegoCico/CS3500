@@ -2,8 +2,6 @@ package cs3500.threetrios.level0;
 
 import cs3500.threetrios.card.COLOR;
 import cs3500.threetrios.card.Card;
-import cs3500.threetrios.game.Game;
-import cs3500.threetrios.game.Grid;
 import cs3500.threetrios.game.ReadOnlyGameModel;
 
 import java.util.HashSet;

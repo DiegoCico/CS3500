@@ -34,7 +34,14 @@ public class GameModel implements Game, ReadOnlyGameModel {
   private Random rand = new Random();
   private List<BattleRule> battleRules;
 
-
+  /**
+   * Constructs a new {@code GameModel} instance with the specified grid, players, and battle rules.
+   *
+   * @param grid        the grid used in the game
+   * @param players     an array of players participating in the game; must contain exactly two players
+   * @param battleRules a list of battle rules to be applied during the game; if {@code null}, a default rule is used
+   * @throws IllegalArgumentException if the grid is {@code null}, the players array is {@code null}, or does not contain exactly two players
+   */
   public GameModel(Grid grid, Player[] players, List<BattleRule> battleRules) {
     if (grid == null || players == null || players.length != 2) {
       throw new IllegalArgumentException("Grid and Players cannot be null");
@@ -285,51 +292,6 @@ public class GameModel implements Game, ReadOnlyGameModel {
       }
     }
   }
-
-  //NORMAL
-//  /**
-//   * Conducts a battle between the card placed at the specified row and column
-//   * and adjacent cards.
-//   *
-//   * @param row the row where the card is located
-//   * @param col the column where the card is located
-//   */
-//  @Override
-//  public void battleCards(int row, int col, Set<Card> flippedCards) {
-//    Card placedCard = grid.getCard(row, col);
-//    flippedCards.add(placedCard);
-//
-//    int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-//    int[] opposingSides = {2, 3, 0, 1};
-//
-//    for (int i = 0; i < directions.length; i++) {
-//      int newRow = row + directions[i][0];
-//      int newCol = col + directions[i][1];
-//
-//      if (grid.validPosition(newRow, newCol)) {
-//        Card adjacentCard = grid.getCard(newRow, newCol);
-//
-//        if (adjacentCard != null
-//                && adjacentCard.getColor() != placedCard.getColor()
-//                && !flippedCards.contains(adjacentCard)) {
-//          int placedCardAttack = getAttackValue(placedCard, i);
-//          int adjacentCardAttack = getAttackValue(adjacentCard, opposingSides[i]);
-//
-//          System.out.println("Placed card attack: "
-//                  + placedCardAttack + ", Adjacent card attack: "
-//                  + adjacentCardAttack + " (Direction: " + i + ")");
-//
-//          if (placedCardAttack > adjacentCardAttack) {
-//            adjacentCard.switchColor(placedCard.getColor());
-//            System.out.println("Flipping card at " + newRow + ", " + newCol);
-//
-//            flippedCards.add(adjacentCard);
-//            battleCards(newRow, newCol, flippedCards);
-//          }
-//        }
-//      }
-//    }
-//  }
 
   /**
    * Gets a certain attack value associated with a Card and direction.

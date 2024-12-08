@@ -34,7 +34,8 @@ public class ThreeTriosControllerImpl implements ThreeTriosGameController {
    * @param view     the game view
    * @param strategy the strategy controller for AI moves
    */
-  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view, boolean enableHints, PosnStrategy strategy) {
+  public ThreeTriosControllerImpl(Game model, ThreeTriosGameView view,
+                                  boolean enableHints, PosnStrategy strategy) {
     this.model = model;
     this.view = view;
     this.enableHints = enableHints;

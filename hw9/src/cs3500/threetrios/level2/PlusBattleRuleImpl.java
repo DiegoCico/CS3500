@@ -4,13 +4,33 @@ import cs3500.threetrios.card.Card;
 import cs3500.threetrios.game.Grid;
 import cs3500.threetrios.level1.BattleRule;
 
+/**
+ * Plus battle rule: flips a defender's card if the sum of two attack values
+ * (one from attacking card and the other from adjacent card) are equal in at least two directions.
+ * The defender is flipped if adjacent cards match the sum rule in given direction.
+ */
 public class PlusBattleRuleImpl implements BattleRule {
   private final Grid grid;
 
+  /**
+   * Constructor for PlusBattleRuleImpl.
+   *
+   * @param grid the game grid where the cards are placed
+   */
   public PlusBattleRuleImpl(Grid grid) {
     this.grid = grid;
   }
 
+  /**
+   * Determines if defender's card should flip based on the Plus battle rule.
+   * The card is flipped if the sum of two attack values from attacking card and two adjacent cards
+   * are equal in at least two directions.
+   *
+   * @param attacker  the attacking card
+   * @param defender  the defending card
+   * @param direction the direction of the attack
+   * @return true if the defender's card should flip
+   */
   @Override
   public boolean shouldFlip(Card attacker, Card defender, int direction) {
     int[] opposingSides = {2, 3, 0, 1};
@@ -36,15 +56,21 @@ public class PlusBattleRuleImpl implements BattleRule {
           Card adjacentCard1 = grid.getCard(newRow1, newCol1);
           Card adjacentCard2 = grid.getCard(newRow2, newCol2);
 
-          if (adjacentCard1 != null && adjacentCard2 != null &&
-                  adjacentCard1.getColor() != attacker.getColor() &&
-                  adjacentCard2.getColor() != attacker.getColor()) {
+          if (adjacentCard1 != null
+                  && adjacentCard2 != null
+                  && adjacentCard1.getColor() != attacker.getColor()
+                  && adjacentCard2.getColor() != attacker.getColor()) {
 
-            int sum1 = getAttackValue(attacker, i) + getAttackValue(adjacentCard1, opposingSides[i]);
-            int sum2 = getAttackValue(attacker, j) + getAttackValue(adjacentCard2, opposingSides[j]);
+            int sum1 = getAttackValue(attacker, i)
+                    + getAttackValue(adjacentCard1, opposingSides[i]);
+            int sum2 = getAttackValue(attacker, j)
+                    + getAttackValue(adjacentCard2, opposingSides[j]);
 
-            if (sum1 == sum2 && ((adjacentCard1 == defender && i == direction) || (adjacentCard2 == defender && j == direction))) {
-              return true;
+            if ((adjacentCard1 == defender && i == direction) ||
+                    (adjacentCard2 == defender && j == direction)) {
+              if (sum1 == sum2) {
+                return true;
+              }
             }
           }
         }
@@ -53,12 +79,13 @@ public class PlusBattleRuleImpl implements BattleRule {
     return false;
   }
 
-
-
-
-
-
-
+  /**
+   * Returns the attack value of the given card in specific direction.
+   *
+   * @param card      current card
+   * @param direction the direction (0=North, 1=East, 2=South, 3=West)
+   * @return the attack val in the given direction
+   */
   private int getAttackValue(Card card, int direction) {
     switch (direction) {
       case 0:

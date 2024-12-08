@@ -2,7 +2,11 @@ package cs3500.threetrios.level1;
 
 import cs3500.threetrios.card.Card;
 
+/**
+ * the interface for the battle rules.
+ */
 public interface BattleRule {
+
   /**
    * Determines if the defender card should flip based on the attacker card.
    *

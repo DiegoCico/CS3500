@@ -15,11 +15,19 @@ import cs3500.threetrios.gui.BluePlayerView;
 import cs3500.threetrios.gui.RedPlayerView;
 import cs3500.threetrios.gui.ThreeTriosGameView;
 
+/**
+ * The main entry point for the Three Trios game, setting up the model, view,
+ * and controller, and starting the game.
+ */
 public class Main2 {
 
   private static boolean blueHint = true;
   private static boolean redHint = true;
 
+  /**
+   * Running the game.
+   * @param args for the game set up.
+   */
   public static void main(String[] args) throws FileNotFoundException {
     if (!validateArgs(args)) {
       return;

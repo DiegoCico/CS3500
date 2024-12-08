@@ -35,12 +35,6 @@ public class GridPanel extends JPanel {
   }
 
   /**
-   * Draws hints on the grid if hints are enabled.
-   * Highlights cells with semi-transparent colors and displays the number of flips.
-   *
-   * @param g the Graphics object
-   */
-  /**
    * Draws hints on the grid in the bottom-right corner of each cell.
    *
    * @param g the Graphics object
@@ -65,6 +59,14 @@ public class GridPanel extends JPanel {
   }
 
 
+  /**
+   * Sets a hint for a specific cell in the grid.
+   * The hint is stored and the component is repainted to reflect the updated hints.
+   *
+   * @param row  the row index of the cell
+   * @param col  the column index of the cell
+   * @param hint the hint text to be displayed for the cell
+   */
   public void setHint(int row, int col, String hint) {
     System.out.println("row " + row + " col " + col + " hint " + hint);
     hints.put(new Point(row, col), hint);
