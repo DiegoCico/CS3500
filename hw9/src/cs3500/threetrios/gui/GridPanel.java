@@ -1,7 +1,10 @@
 package cs3500.threetrios.gui;
 
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 

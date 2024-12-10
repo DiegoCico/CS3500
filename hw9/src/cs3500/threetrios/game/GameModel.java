@@ -37,10 +37,13 @@ public class GameModel implements Game, ReadOnlyGameModel {
   /**
    * Constructs a new {@code GameModel} instance with the specified grid, players, and battle rules.
    *
-   * @param grid        the grid used in the game
-   * @param players     an array of players participating in the game; must contain exactly two players
-   * @param battleRules a list of battle rules to be applied during the game; if {@code null}, a default rule is used
-   * @throws IllegalArgumentException if the grid is {@code null}, the players array is {@code null}, or does not contain exactly two players
+   * @param grid the grid used in the game
+   * @param players an array of players participating in the game;
+   *                must contain exactly two players
+   * @param battleRules a list of battle rules to be applied during the game;
+   *                   if {@code null}, a default rule is used
+   * @throws IllegalArgumentException if the grid is {@code null},
+   * the players array is {@code null}, or does not contain exactly two players
    */
   public GameModel(Grid grid, Player[] players, List<BattleRule> battleRules) {
     if (grid == null || players == null || players.length != 2) {

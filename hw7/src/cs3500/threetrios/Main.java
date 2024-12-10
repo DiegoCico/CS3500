@@ -1,10 +1,5 @@
 package cs3500.threetrios;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.SwingUtilities;
-
 import cs3500.threetrios.ai.Flip;
 import cs3500.threetrios.ai.GoForCorner;
 import cs3500.threetrios.ai.HybridStrategy;
@@ -18,6 +13,9 @@ import cs3500.threetrios.gui.BluePlayerView;
 import cs3500.threetrios.gui.RedPlayerView;
 import cs3500.threetrios.gui.ThreeTriosGameView;
 import cs3500.threetrios.gui.ThreeTriosViewImpl;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.SwingUtilities;
 
 /**
  * The main entry point for the Three Trios game, setting up the model, view,
@@ -29,9 +27,10 @@ public class Main {
    * Running the game.
    * @param args for the game set up.
    */
-  public static void main(String[] args) {
+  public static void main(String[] a) {
     SwingUtilities.invokeLater(() -> {
       try {
+        String[] args = {"human", "strategy1"};
         if (args == null || args.length < 2) {
           throw new IllegalArgumentException("\"human\" \"human\" or \"human\" \"strategy1");
         }
