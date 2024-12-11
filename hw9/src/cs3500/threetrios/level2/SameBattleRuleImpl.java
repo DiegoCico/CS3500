@@ -57,10 +57,10 @@ public class SameBattleRuleImpl implements BattleRule {
         if (adjacentCard != null &&
                 adjacentCard.getColor() != attacker.getColor() &&
                 getAttackValue(adjacentCard, opposingSides[i]) == attackVal) {
-          matchCount++;
           if (adjacentCard == defender && i == direction) {
-            matchCount++;
+            continue;
           }
+          matchCount++;
         }
       }
     }

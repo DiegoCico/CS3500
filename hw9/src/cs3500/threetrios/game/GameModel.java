@@ -43,7 +43,8 @@ public class GameModel implements Game, ReadOnlyGameModel {
    * @param battleRules a list of battle rules to be applied during the game;
    *                   if {@code null}, a default rule is used
    * @throws IllegalArgumentException if the grid is {@code null},
-   * the players array is {@code null}, or does not contain exactly two players
+   *                 the players array is {@code null},
+   *                 or does not contain exactly two players
    */
   public GameModel(Grid grid, Player[] players, List<BattleRule> battleRules) {
     if (grid == null || players == null || players.length != 2) {
@@ -54,6 +55,7 @@ public class GameModel implements Game, ReadOnlyGameModel {
     this.players = players;
     this.turn = 0;
     this.battleRules = battleRules != null ? battleRules : List.of(new BattleRuleImpl());
+    System.out.println(battleRules);
   }
 
   /**
@@ -264,10 +266,9 @@ public class GameModel implements Game, ReadOnlyGameModel {
     return new GameGrid(this.grid);
   }
 
-
-  // BATTLE MODE
   @Override
   public void battleCards(int row, int col, Set<Card> flippedCards) {
+    System.out.println("BATTKLE");
     Card placedCard = grid.getCard(row, col);
     flippedCards.add(placedCard);
 
@@ -285,6 +286,7 @@ public class GameModel implements Game, ReadOnlyGameModel {
 
           for (BattleRule rule : battleRules) {
             if (rule.shouldFlip(placedCard, adjacentCard, i)) {
+              System.out.println("SWITCHING COLORS");
               adjacentCard.switchColor(placedCard.getColor());
               flippedCards.add(adjacentCard);
               battleCards(newRow, newCol, flippedCards);
@@ -293,23 +295,6 @@ public class GameModel implements Game, ReadOnlyGameModel {
           }
         }
       }
-    }
-  }
-
-  /**
-   * Gets a certain attack value associated with a Card and direction.
-   *
-   * @param card a game card
-   * @param direction a direction
-   * @return the value of the card in the specified direction
-   */
-  private int getAttackValue(Card card, int direction) {
-    switch (direction) {
-      case 0: return card.getNorth();
-      case 1: return card.getEast();
-      case 2: return card.getSouth();
-      case 3: return card.getWest();
-      default: throw new IllegalArgumentException("Invalid direction");
     }
   }
 

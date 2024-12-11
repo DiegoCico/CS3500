@@ -21,13 +21,11 @@ public class FallenAceBattleRuleImpl implements BattleRule {
   public boolean shouldFlip(Card attacker, Card defender, int direction) {
     int attackerValue = getAttackValue(attacker, direction);
     int defenderValue = getAttackValue(defender, (direction + 2) % 4);
-
-    if (attackerValue == 1 && defenderValue == 10) {
-      return true;
-    }
-
-    return attackerValue > defenderValue;
+    System.out.println("ACE " + attackerValue);
+    System.out.println("ACE " + defenderValue);
+    return attackerValue >= defenderValue;
   }
+
 
   /**
    * Returns the attack value of the given card in specific direction.

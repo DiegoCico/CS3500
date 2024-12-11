@@ -1,6 +1,5 @@
 package cs3500.threetrios;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,22 +27,25 @@ public class Main2 {
    * Running the game.
    * @param args for the game set up.
    */
-  public static void main(String[] args) throws FileNotFoundException {
+  public static void main(String[] args) {
     if (!validateArgs(args)) {
       return;
     }
 
-    GameModel game = new GameModel("docs/boardNoHoles.config", new ArrayList<>());
-    List<BattleRule> rules = parseRules(args, game);
-
-    if (rules.isEmpty()) {
-      addDefaultRules(rules);
-    }
-
-    System.out.println("Game started with rules:");
-    rules.forEach(rule -> System.out.println(rule.getClass().getSimpleName()));
+    List<BattleRule> rules = new ArrayList<>();
 
     try {
+      GameModel temp = new GameModel("docs/boardNoHoles.config", rules);
+      rules = parseRules(args, temp);
+      GameModel game = new GameModel("docs/boardNoHoles.config", rules);
+
+      if (rules.isEmpty()) {
+        addDefaultRules(rules);
+      }
+
+      System.out.println("Game started with rules:");
+      rules.forEach(rule -> System.out.println(rule.getClass().getSimpleName()));
+
       createHumanVsHumanGame(game);
     } catch (Exception e) {
       System.out.println("Error initializing game: " + e.getMessage());
@@ -56,7 +58,7 @@ public class Main2 {
    */
   private static boolean validateArgs(String[] args) {
     if (args.length < 2) {
-      System.out.println("Usage: [rules] human human [--redHint=false] [--blueHint=false]");
+      System.out.println("Usage: [rules] [--redHint=false] [--blueHint=false] human human");
       return false;
     }
 

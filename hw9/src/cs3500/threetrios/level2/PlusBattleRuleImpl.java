@@ -79,6 +79,8 @@ public class PlusBattleRuleImpl implements BattleRule {
     return false;
   }
 
+
+
   /**
    * Returns the attack value of the given card in specific direction.
    *

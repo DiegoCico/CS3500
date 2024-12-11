@@ -12,7 +12,7 @@ import cs3500.threetrios.player.Player;
  * that can give simulated answers and that can record
  * a transcript of what methods were used.
  */
-public class MockGameModel implements Game {
+public class MockGameModel implements Game, ReadOnlyGameModel {
 
   private final List<String> methodCalls = new ArrayList<>();
   private boolean isMoveLegal = true;
@@ -212,6 +212,28 @@ public class MockGameModel implements Game {
   public String checkWinCondition() {
     methodCalls.add("checkWinCondition");
     return checkWinningCondition;
+  }
+
+  /**
+   * Gets the grid size based on rows.
+   * @return rows as size
+   */
+  @Override
+  public int getGridSize() {
+    methodCalls.add("getGridSize based on rows");
+    return grid.getRows();
+  }
+
+  /**
+   * Gets the card at specific location.
+   * @param row the row of the card's location.
+   * @param col the column of the card's location.
+   * @return
+   */
+  @Override
+  public Card getCardAt(int row, int col) {
+    methodCalls.add("getCardAt(" + row + ", " + col + ")");
+    return grid.getCard(row, col);
   }
 
   /**

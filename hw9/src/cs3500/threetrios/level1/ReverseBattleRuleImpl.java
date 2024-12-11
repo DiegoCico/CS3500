@@ -20,7 +20,9 @@ public class ReverseBattleRuleImpl implements BattleRule {
    */
   @Override
   public boolean shouldFlip(Card attacker, Card defender, int direction) {
-    return getAttackValue(attacker, direction) < getAttackValue(defender, (direction + 2) % 4);
+    System.out.println("REVERSE BATTLE " + getAttackValue(attacker, direction));
+    System.out.println("REVERSE BATTLE " + getAttackValue(defender, (direction + 2) % 4));
+    return getAttackValue(attacker, direction) > getAttackValue(defender, (direction + 2) % 4);
   }
 
   /**

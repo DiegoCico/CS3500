@@ -19,7 +19,7 @@ public class BattleRuleImpl implements BattleRule {
    */
   @Override
   public boolean shouldFlip(Card attacker, Card defender, int direction) {
-    return getAttackValue(attacker, direction) > getAttackValue(defender, (direction + 2) % 4);
+    return getAttackValue(attacker, direction) >= getAttackValue(defender, (direction + 2) % 4);
   }
 
   /**
